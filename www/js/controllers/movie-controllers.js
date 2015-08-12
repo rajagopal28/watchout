@@ -1,5 +1,5 @@
 angular.module('watchout.movie-controllers', [])
-.controller('MovieGenresCtrl', function($scope, $filter,MovieGenres){ // $cordovaSQLite, MovieGenres) {
+.controller('MovieGenresCtrl', function($scope, $filter, $ionicLoading, MovieGenres){ // $cordovaSQLite, MovieGenres) {
   /*
   var query = "select genreid from moviegenres";
   $cordovaSQLite.execute(db,query,[]).then(function(results){
@@ -20,7 +20,16 @@ angular.module('watchout.movie-controllers', [])
     
   //setTimeout(function(){
     $scope.movieGenres =  MovieGenres.all();
+    if($scope.movieGenres.length == 0) {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      MovieGenres.init($scope);
+    }
   //}, 10);
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  }
   $scope.remove = function(movieGenre) {
     MovieGenres.remove(movieGenre);
   };
@@ -50,7 +59,7 @@ angular.module('watchout.movie-controllers', [])
  };
 })
 
-.controller('MovieCtrl',  function($scope,$stateParams,$filter, Movies){
+.controller('MovieCtrl',  function($scope,$stateParams,$filter, $ionicLoading, Movies){
   
   // Movies.init($scope);
   
@@ -66,9 +75,15 @@ angular.module('watchout.movie-controllers', [])
   $scope.remove = function(movie) {
     Movies.remove(movie);
   };
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
   $scope.fetchMoreMovies = function() {
     // $scope.apply();
     // Movies.init();
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
     console.log('Fetching More Movies...');
     Movies.loadMore($scope);
   }
