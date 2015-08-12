@@ -6,9 +6,10 @@
    </label>
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="movie in movies" type="item-text-wrap" href="#/app/movies/{{movie.id}}">
-        <img ng-src="{{movie.backdrop_path}}">
+        <img ng-src="{{movie.poster_path}}">
         <h2>{{movie.title}}</h2>
         <p>{{movie.release_date}}</p>
+        <p>{{movie.movie_genre_labels}}</p>
         <i class="icon ion-chevron-right icon-accessory"></i>
 
         <ion-option-button class="button-assertive" ng-click="remove(movie)">
