@@ -1,89 +1,23 @@
 angular.module('watchout.movie-services', [])
 
 .factory('MovieGenres', function(){
-    var movieGenres = [
-   {
-      "id":28,
-      "name":"Action"
-   },
-   {
-      "id":12,
-      "name":"Adventure"
-   },
-   {
-      "id":16,
-      "name":"Animation"
-   },
-   {
-      "id":35,
-      "name":"Comedy"
-   },
-   {
-      "id":80,
-      "name":"Crime"
-   },
-   {
-      "id":99,
-      "name":"Documentary"
-   },
-   {
-      "id":18,
-      "name":"Drama"
-   },
-   {
-      "id":10751,
-      "name":"Family"
-   },
-   {
-      "id":14,
-      "name":"Fantasy"
-   },
-   {
-      "id":10769,
-      "name":"Foreign"
-   },
-   {
-      "id":36,
-      "name":"History"
-   },
-   {
-      "id":27,
-      "name":"Horror"
-   },
-   {
-      "id":10402,
-      "name":"Music"
-   },
-   {
-      "id":9648,
-      "name":"Mystery"
-   },
-   {
-      "id":10749,
-      "name":"Romance"
-   },
-   {
-      "id":878,
-      "name":"Science Fiction"
-   },
-   {
-      "id":10770,
-      "name":"TV Movie"
-   },
-   {
-      "id":53,
-      "name":"Thriller"
-   },
-   {
-      "id":10752,
-      "name":"War"
-   },
-   {
-      "id":37,
-      "name":"Western"
-   }];
+    var movieGenres = [];
    var selectedMovieGenres = [];
  return {
+  init : function(scope) {
+    movieGenres = [];
+    theMovieDb.genres.getList({}, 
+      function(data) {
+        var parsedData = JSON.parse(data);
+        movieGenres = parsedData.genres;
+        scope.movieGenres = movieGenres;
+        scope.hideSpinner();
+      }, 
+      function(error){
+        console.log('Error CB');
+        console.log(error);
+      });
+  },
   all: function() {
       for (var i = 0; i < movieGenres.length; i++) {
         for (var j=0; j< selectedMovieGenres; j++) {
@@ -116,7 +50,7 @@ angular.module('watchout.movie-services', [])
  };
 })
 
-.factory('Movies', ['MovieGenres', function(MovieGenres){
+.factory('Movies', ['MovieGenres', 'Configurations', function(MovieGenres, Configurations){
   var movies = [];
   var currentPage = 0;
   var myGenres = MovieGenres.getFavouriteGenres();
@@ -126,46 +60,72 @@ angular.module('watchout.movie-services', [])
   } else {
     myGenreString ='10765|9648|18|35';
   }
+  console.log(Configurations.getConfigurations());
   var discoverWithAttributes = {
     'with_genres' : myGenreString,
     'include_adult' : true,
-    'sort_by' : 'popularity.asc',
+    'sort_by' : 'popularity.desc',
     'page' : currentPage
   };
 return {
     init : function(scope) {
-      // initialize if the movies list is not fetched
-      if(movies.length == 0) {
-        // make movie db call
-        currentPage = 1;
-      }
-      this.loadMovies(scope, currentPage);
+      // initialize if the movies list
+        movies = [];
+        currentPage = 0;
+      // this.loadMovies(scope, currentPage);
         
     },
     loadMovies : function(scope, pagetoLoad) {
       discoverWithAttributes.page = pagetoLoad;
+      var config = Configurations.getConfigurations();
       theMovieDb.discover.getMovies(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
           var parsedData = JSON.parse(data);
           // console.log(parsedData.results);
-          movies = movies.concat(parsedData.results);
+          var newMoviesPage = parsedData.results;
+          for( var index in newMoviesPage) {
+            var newMovie = newMoviesPage[index];
+            var relativeImageURL = newMovie.poster_path;
+            console.log(newMovie);
+            if(relativeImageURL) {
+                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                  relativeImageURL = config.images.base_url 
+                                      + config.images.poster_sizes[0]
+                                      + relativeImageURL;
+                  newMovie.poster_path = relativeImageURL;
+                  // console.log(relativeImageURL);
+                }
+            } else {
+              newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+            }
+            relativeImageURL = newMovie.backdrop_path;
+            if(relativeImageURL) {
+              console.log(relativeImageURL);
+              if(!relativeImageURL.startsWith(config.images.base_url)) {
+                  relativeImageURL = config.images.base_url  
+                                      + config.images.backdrop_sizes[0]
+                                      + relativeImageURL;
+                  newMovie.backdrop_path = relativeImageURL;
+                  // console.log(relativeImageURL);
+                }
+            } else {
+              newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+            }
+          }
+          movies = movies.concat(newMoviesPage);
           console.log(movies);
           scope.movies = movies;
+          scope.hideSpinner();
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
-        function(data) {
+        function(error) {
           console.log("Error CB");
-          console.log(data);
+          console.log(error);
         });
     },
     loadMore : function(scope) {
-      if(movies.length == 0) {
-        currentPage = 1;
-        movies = [];
-      } else {
-        currentPage += 1;
-      }
+      currentPage += 1;
       this.loadMovies(scope, currentPage);
     },
     all: function() {
