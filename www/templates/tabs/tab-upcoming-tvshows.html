@@ -1,0 +1,16 @@
+<ion-view view-title="TV Shows">
+  <ion-content>
+    <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" href="#/app/tvshows/{{tvShow.id}}">
+        <img ng-src="{{tvShow.backdrop_path}}">
+        <h2>{{tvShow.original_name}}</h2>
+        <p>{{tvShow.first_air_date}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(tvShow)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

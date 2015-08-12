@@ -1,0 +1,11 @@
+<ion-view view-title="Movie Genre">
+  <ion-content>
+    <ion-list>
+     <ion-checkbox ng-model="movieGenre.checked" ng-checked="movieGenre.checked"  ng-repeat="movieGenre in movieGenres" type="item-text-wrap">
+    {{movieGenre.name}}</ion-checkbox>
+    </ion-list>
+    <button ng-click="saveFavoriteGenre();" class="button button-block button-positive">
+    	Save
+	</button>
+  </ion-content>
+</ion-view>
