@@ -26,7 +26,7 @@ angular.module('watchout.tvshow-controllers', [])
   }
   $scope.remove = function(tvGenre) {
     TVGenres.remove(tvGenre);
-  };
+  }; 
    $scope.saveFavoriteGenre = function() {
   console.log('Saving favourite genre');
     var selectedGenres = $filter("filter")($scope.tvGenres, {checked: true});
@@ -70,6 +70,8 @@ angular.module('watchout.tvshow-controllers', [])
     TVShows.loadMore($scope);
   }
   $scope.$on('$stateChangeSuccess', function() {
-    $scope.fetchMoreTvShows();
+    if(!$scope.tvShows || $scope.tvShows.length == 0) {
+      $scope.fetchMoreTvShows();
+    }
   });
 });

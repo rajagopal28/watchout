@@ -61,9 +61,8 @@ angular.module('watchout.movie-controllers', [])
 })
 
 .controller('MovieCtrl',  function($scope,$stateParams,$filter, $ionicLoading, Movies){
-  Movies.setReloadingFlag(true);
   // Movies.init($scope);
-  
+  $scope.movies = Movies.all();
   $scope.selected = {
     movieName : ''
   };
@@ -89,9 +88,10 @@ angular.module('watchout.movie-controllers', [])
     Movies.loadMore($scope);
   }
   $scope.$on('$stateChangeSuccess', function() {
-    $scope.fetchMoreMovies();
+    if(!$scope.movies || $scope.movies.length == 0) {
+      $scope.fetchMoreMovies();
+    }
   });
-  Movies.setReloadingFlag(false);
 })
 .controller('MovieDetailCtrl',  function($scope,$stateParams, Movies){
   $scope.movie = Movies.get($stateParams.movieId);
