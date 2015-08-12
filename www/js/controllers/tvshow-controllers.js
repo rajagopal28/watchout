@@ -1,6 +1,6 @@
 angular.module('watchout.tvshow-controllers', [])
 
-.controller('TVGenresCtrl', function($scope, $filter,TVGenres){ // $cordovaSQLite, TVGenres) {
+.controller('TVGenresCtrl', function($scope, $filter, $ionicLoading, TVGenres){ // $cordovaSQLite, TVGenres) {
   /*
   var query = "select genreid from tvgenres";
   $cordovaSQLite.execute(db,query,[]).then(function(results){
@@ -20,6 +20,12 @@ angular.module('watchout.tvshow-controllers', [])
   });*/
   //setTimeout(function(){
     $scope.tvGenres =  TVGenres.all();
+    if($scope.tvGenres.length == 0) {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      TVGenres.init($scope);
+    }
   //}, 10);
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
