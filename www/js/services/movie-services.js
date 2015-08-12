@@ -57,6 +57,8 @@ angular.module('watchout.movie-services', [])
   var currentPage = 0;
   var myGenres = MovieGenres.getFavouriteGenres();
   var myGenreString = '';
+  var isLoading = false;
+  var isReloadingPage = false;
   if(myGenres && myGenres.length > 0) {
     myGenreString = myGenres.join('|');
   } else {
@@ -74,6 +76,7 @@ return {
       // initialize if the movies list
       if(movies.length == 0) {
          currentPage = 0;
+         currentLoadedPage = 0;
         var genres = MovieGenres.all();
         if(genres.length == 0) {
           MovieGenres.init();// init without scope to use genres later
@@ -86,7 +89,9 @@ return {
     loadMovies : function(scope, pagetoLoad) {
       discoverWithAttributes.page = pagetoLoad;
       var config = Configurations.getConfigurations();
-      theMovieDb.discover.getMovies(discoverWithAttributes,
+      if(!isLoading && !isReloadingPage) {
+        isLoading = true;
+        theMovieDb.discover.getMovies(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
           var parsedData = JSON.parse(data);
@@ -128,7 +133,7 @@ return {
             var movieGenreLabels = '';
             for(var index in genres) {
               if(movieGenreIds.indexOf(genres[index].id) != -1) {
-                if(movieGenreLabels.length>0) {
+                if(movieGenreLabels.length > 0) {
                   movieGenreLabels += ',';
                 }
                 movieGenreLabels += genres[index].name;
@@ -136,23 +141,31 @@ return {
             }
             // set it to list item 
             newMovie.movie_genre_labels = movieGenreLabels;
-            console.log(movieGenreLabels);
+            // console.log(movieGenreLabels);
           }
           movies = movies.concat(newMoviesPage);
           // console.log(movies);
           scope.movies = movies;
           scope.hideSpinner();
+          isLoading = false;
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
           console.log("Error CB");
           console.log(error);
+          isLoading = false;
         });
+        loadMore = false;
+      }
     },
     loadMore : function(scope) {
       this.init();
       currentPage += 1;
+      isReloadingPage = false;
       this.loadMovies(scope, currentPage);
+    },
+    setReloadingFlag : function(flag) {
+      isReloadingPage = flag;
     },
     all: function() {
       return movies;

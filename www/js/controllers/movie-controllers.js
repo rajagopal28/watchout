@@ -61,7 +61,7 @@ angular.module('watchout.movie-controllers', [])
 })
 
 .controller('MovieCtrl',  function($scope,$stateParams,$filter, $ionicLoading, Movies){
-  
+  Movies.setReloadingFlag(true);
   // Movies.init($scope);
   
   $scope.selected = {
@@ -91,6 +91,7 @@ angular.module('watchout.movie-controllers', [])
   $scope.$on('$stateChangeSuccess', function() {
     $scope.fetchMoreMovies();
   });
+  Movies.setReloadingFlag(false);
 })
 .controller('MovieDetailCtrl',  function($scope,$stateParams, Movies){
   $scope.movie = Movies.get($stateParams.movieId);

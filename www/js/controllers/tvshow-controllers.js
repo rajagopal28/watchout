@@ -21,6 +21,9 @@ angular.module('watchout.tvshow-controllers', [])
   //setTimeout(function(){
     $scope.tvGenres =  TVGenres.all();
   //}, 10);
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  }
   $scope.remove = function(tvGenre) {
     TVGenres.remove(tvGenre);
   };
@@ -49,9 +52,24 @@ angular.module('watchout.tvshow-controllers', [])
 .controller('TVShowDetailCtrl',  function($scope,$stateParams, TVShows){
   $scope.tvShow = TVShows.get($stateParams.showId);
 })
-.controller('TVShowCtrl',  function($scope,$stateParams, TVShows){
+.controller('TVShowCtrl',  function($scope,$stateParams,$ionicLoading, TVShows){
   $scope.tvShows = TVShows.all();
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
   $scope.remove = function(tvShow) {
     Movies.remove(tvShow);
   };
+  $scope.fetchMoreTvShows = function() {
+    // $scope.apply();
+    // Movies.init();
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    console.log('Fetching More TV Shows...');
+    TVShows.loadMore($scope);
+  }
+  $scope.$on('$stateChangeSuccess', function() {
+    $scope.fetchMoreTvShows();
+  });
 });
