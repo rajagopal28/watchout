@@ -1,3 +1,16 @@
+getDisplayDate = function(inlineDate){
+	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+	if(inlineDate.length > 0) {
+		var dateFragments = inlineDate.split("-");
+		if(dateFragments.length == 3) {
+			return dateFragments[2]
+				+ months[(1*dateFragments[1])-1]
+				+ dateFragments[0];
+		}
+	}
+	return "";
+};
+
 
 getSaveGenresFunction = function(id, tx,tableName){
   return function() {
