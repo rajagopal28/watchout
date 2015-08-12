@@ -10,8 +10,10 @@ angular.module('watchout.movie-services', [])
       function(data) {
         var parsedData = JSON.parse(data);
         movieGenres = parsedData.genres;
-        scope.movieGenres = movieGenres;
-        scope.hideSpinner();
+        if(scope) {          
+          scope.movieGenres = movieGenres;
+          scope.hideSpinner();
+        }
       }, 
       function(error){
         console.log('Error CB');
@@ -70,8 +72,14 @@ angular.module('watchout.movie-services', [])
 return {
     init : function(scope) {
       // initialize if the movies list
-        movies = [];
-        currentPage = 0;
+      if(movies.length == 0) {
+         currentPage = 0;
+        var genres = MovieGenres.all();
+        if(genres.length == 0) {
+          MovieGenres.init();// init without scope to use genres later
+        }
+      }
+       
       // this.loadMovies(scope, currentPage);
         
     },
@@ -86,8 +94,9 @@ return {
           var newMoviesPage = parsedData.results;
           for( var index in newMoviesPage) {
             var newMovie = newMoviesPage[index];
+            // change the poster path
             var relativeImageURL = newMovie.poster_path;
-            console.log(newMovie);
+            // console.log(newMovie);
             if(relativeImageURL) {
                 if(!relativeImageURL.startsWith(config.images.base_url)) {
                   relativeImageURL = config.images.base_url 
@@ -99,9 +108,10 @@ return {
             } else {
               newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
+            // change the backdrop path
             relativeImageURL = newMovie.backdrop_path;
             if(relativeImageURL) {
-              console.log(relativeImageURL);
+              // console.log(relativeImageURL);
               if(!relativeImageURL.startsWith(config.images.base_url)) {
                   relativeImageURL = config.images.base_url  
                                       + config.images.backdrop_sizes[0]
@@ -112,9 +122,24 @@ return {
             } else {
               newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
+            // add genre names
+            var genres = MovieGenres.all();
+            var movieGenreIds  = newMovie.genre_ids;
+            var movieGenreLabels = '';
+            for(var index in genres) {
+              if(movieGenreIds.indexOf(genres[index].id) != -1) {
+                if(movieGenreLabels.length>0) {
+                  movieGenreLabels += ',';
+                }
+                movieGenreLabels += genres[index].name;
+              }
+            }
+            // set it to list item 
+            newMovie.movie_genre_labels = movieGenreLabels;
+            console.log(movieGenreLabels);
           }
           movies = movies.concat(newMoviesPage);
-          console.log(movies);
+          // console.log(movies);
           scope.movies = movies;
           scope.hideSpinner();
           scope.$broadcast('scroll.infiniteScrollComplete');
@@ -125,6 +150,7 @@ return {
         });
     },
     loadMore : function(scope) {
+      this.init();
       currentPage += 1;
       this.loadMovies(scope, currentPage);
     },

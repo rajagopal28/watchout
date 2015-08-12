@@ -21,6 +21,7 @@ angular.module('watchout.movie-controllers', [])
   //setTimeout(function(){
     $scope.movieGenres =  MovieGenres.all();
     if($scope.movieGenres.length == 0) {
+      console.log('Calling in MovieGenres');
       $ionicLoading.show({
         template: 'Loading...'
       });
