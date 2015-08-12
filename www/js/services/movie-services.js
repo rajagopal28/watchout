@@ -58,7 +58,6 @@ angular.module('watchout.movie-services', [])
   var myGenres = MovieGenres.getFavouriteGenres();
   var myGenreString = '';
   var isLoading = false;
-  var isReloadingPage = false;
   if(myGenres && myGenres.length > 0) {
     myGenreString = myGenres.join('|');
   } else {
@@ -76,7 +75,6 @@ return {
       // initialize if the movies list
       if(movies.length == 0) {
          currentPage = 0;
-         currentLoadedPage = 0;
         var genres = MovieGenres.all();
         if(genres.length == 0) {
           MovieGenres.init();// init without scope to use genres later
@@ -87,9 +85,9 @@ return {
         
     },
     loadMovies : function(scope, pagetoLoad) {
-      discoverWithAttributes.page = pagetoLoad;
+      discoverWithAttributes.page = pagetoLoad + 1;
       var config = Configurations.getConfigurations();
-      if(!isLoading && !isReloadingPage) {
+      if(!isLoading) {
         isLoading = true;
         theMovieDb.discover.getMovies(discoverWithAttributes,
         function(data) {
@@ -148,6 +146,7 @@ return {
           scope.movies = movies;
           scope.hideSpinner();
           isLoading = false;
+          currentPage = pagetoLoad + 1;
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
@@ -155,17 +154,11 @@ return {
           console.log(error);
           isLoading = false;
         });
-        loadMore = false;
       }
     },
     loadMore : function(scope) {
       this.init();
-      currentPage += 1;
-      isReloadingPage = false;
       this.loadMovies(scope, currentPage);
-    },
-    setReloadingFlag : function(flag) {
-      isReloadingPage = flag;
     },
     all: function() {
       return movies;

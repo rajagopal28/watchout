@@ -99,7 +99,6 @@ angular.module('watchout.tvshow-services', [])
   var tvShows = [];
   var currentPage = 0;
   var isLoading = false;
-  var isReloadingPage = false;
   var myGenres = TVGenres.getFavouriteGenres();
   var myGenreString = '';
   if(myGenres && myGenres.length > 0) {
@@ -129,7 +128,7 @@ return {
         
     },
     loadTVShows : function(scope, pagetoLoad) {
-      discoverWithAttributes.page = pagetoLoad;
+      discoverWithAttributes.page = pagetoLoad + 1;
       var config = Configurations.getConfigurations();
       if(!isLoading) {
         isLoading = true;
@@ -190,6 +189,7 @@ return {
           scope.tvShows = tvShows;
           scope.hideSpinner();
           isLoading = false;
+          currentPage = pagetoLoad + 1;
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
@@ -201,7 +201,6 @@ return {
     },
     loadMore : function(scope) {
       this.init();
-      currentPage += 1;
       this.loadTVShows(scope, currentPage);
     },
     all: function() {
