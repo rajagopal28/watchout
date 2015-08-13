@@ -10,7 +10,9 @@ getDisplayDate = function(inlineDate){
 	}
 	return "";
 };
-
+isObjectEmpty = function(tObj) {
+	return Object.keys(tObj).length == 0;
+};
 
 getSaveGenresFunction = function(id, tx,tableName){
   return function() {

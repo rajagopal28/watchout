@@ -52,6 +52,72 @@ angular.module('watchout.tvshow-services', [])
  };
 })
 
+.factory('TVShowSeasons', ['Configurations', function(Configurations){
+    var tvShowSeasons = {};
+    var isLoading = false;
+ return {
+  init : function(showId, scope) {
+    tvShowSeasons = {};
+    var config = Configurations.getConfigurations();
+    if(!config) {
+      Configurations.init(this.loadTVShowSeasonsCallBack(showId, scope));
+    } else {
+      this.loadTVShowSeasonsCallBack(showId,scope)();
+    }
+  },
+  loadTVShowSeasonsCallBack : function(showId,scope) {
+    return function() {
+    if(!isLoading) {
+      isLoading = true;
+      theMovieDb.tv.getById({id: showId}, 
+      function(data) {        
+        tvShowSeasons = JSON.parse(data);
+        var config = Configurations.getConfigurations();
+        console.log(config);
+        if(config) {
+            var relativeImageURL = tvShowSeasons.backdrop_path;
+            if(relativeImageURL) {
+              tvShowSeasons.backdrop_path = config.images.base_url + relativeImageURL;
+            }
+           //  console.log(relativeImageURL);
+            relativeImageURL = tvShowSeasons.poster_path;
+            if(relativeImageURL) {
+              tvShowSeasons.poster_path = config.images.base_url + relativeImageURL;
+            }
+            // console.log(relativeImageURL);
+        }
+        if(tvShowSeasons.genres) {
+          var genres_label = '';
+          for(var i = 0;i<tvShowSeasons.genres.length; i++) {
+            if(genres_label.length > 0){
+              genres_label += ", ";
+            }
+            genres_label += tvShowSeasons.genres[i].name;
+          }
+          console.log(genres_label);
+          tvShowSeasons.show_genre_labels = genres_label;
+        }
+        if(scope) {       
+          console.log(tvShowSeasons);   
+          scope.tvShowSeasons = tvShowSeasons;
+          scope.hideSpinner();
+        }
+        isLoading = false;
+      }, 
+      function(error){
+        console.log('Error CB');
+        console.log(error);
+        isLoading = false;
+      });
+    }
+    };
+  },
+  get: function() {
+    return tvShowSeasons;
+  }
+};
+}])
+
 .factory('TVShows',  ['TVGenres', 'Configurations', function(TVGenres, Configurations){
   var tvShows = [];
   var currentPage = 0;
@@ -132,7 +198,7 @@ return {
               for(var index in genres) {
                 if(tvShowGenreIds.indexOf(genres[index].id) != -1) {
                   if(tvShowGenreLabels.length > 0) {
-                    tvShowGenreLabels += ',';
+                    tvShowGenreLabels += ', ';
                   }
                   tvShowGenreLabels += genres[index].name;
                 }
