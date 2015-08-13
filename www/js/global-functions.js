@@ -4,8 +4,8 @@ getDisplayDate = function(inlineDate){
 		var dateFragments = inlineDate.split("-");
 		if(dateFragments.length == 3) {
 			return dateFragments[2]
-				+ months[(1*dateFragments[1])-1]
-				+ dateFragments[0];
+				+ '-' + months[(1*dateFragments[1])-1]
+				+ '-' + dateFragments[0];
 		}
 	}
 	return "";
