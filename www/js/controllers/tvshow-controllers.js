@@ -58,6 +58,19 @@ angular.module('watchout.tvshow-controllers', [])
 .controller('TVShowDetailCtrl',  function($scope,$stateParams, TVShows){
   $scope.tvShow = TVShows.get($stateParams.showId);
 })
+.controller('TVShowSeasonsCtrl',  function($scope,$stateParams,$ionicLoading, TVShowSeasons){
+  $scope.tvShowSeasons = TVShowSeasons.get($stateParams.showId);
+  console.log($stateParams.showId);
+  if(isObjectEmpty($scope.tvShowSeasons)){
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    TVShowSeasons.init($stateParams.showId, $scope);
+  }
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
+})
 .controller('TVShowCtrl',  function($scope,$stateParams,$ionicLoading, TVShows){
   $scope.tvShows = TVShows.all();
   $scope.hideSpinner = function() {

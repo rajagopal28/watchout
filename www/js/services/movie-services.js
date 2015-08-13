@@ -168,6 +168,7 @@ return {
       } else {
         console.log('in else');
         this.loadMoviesCallBack(scope, pagetoLoad)();
+        // call the function returned by the call back function
       }
       
     },
