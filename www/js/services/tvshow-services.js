@@ -77,12 +77,16 @@ angular.module('watchout.tvshow-services', [])
         if(config) {
             var relativeImageURL = tvShowSeasons.backdrop_path;
             if(relativeImageURL) {
-              tvShowSeasons.backdrop_path = config.images.base_url + relativeImageURL;
+              tvShowSeasons.backdrop_path = config.images.base_url 
+                                            + config.images.backdrop_sizes[0]
+                                            + relativeImageURL;
             }
            //  console.log(relativeImageURL);
             relativeImageURL = tvShowSeasons.poster_path;
             if(relativeImageURL) {
-              tvShowSeasons.poster_path = config.images.base_url + relativeImageURL;
+              tvShowSeasons.poster_path = config.images.base_url 
+                                          + config.images.poster_sizes[0]
+                                          + relativeImageURL;
             }
             // console.log(relativeImageURL);
         }
