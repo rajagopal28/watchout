@@ -1,30 +1,31 @@
-<ion-view view-title="{{tvShow.name}}">
+<ion-view view-title="{{tvShowSeasons.name}}">
   <ion-content class="padding">
     <div class="list card">
       <div class="item item-thumbnail-left">
-        <img src="{{movie.poster_path}}">
-        <h2>{{tvShow.original_name}}</h2>
-        <p>{{tvShow.first_air_date}} - {{tvShow.last_air_date}}</p>
+        <img src="{{tvShowSeasons.poster_path}}">
+        <h2>{{tvShowSeasons.original_name}}</h2>
+        <p>{{tvShowSeasons.first_air_date}} - {{tvShowSeasons.last_air_date}}</p>
       </div>
       <div class="item item-body">
-        <img class="item item-image" src="{{tvShow.backdrop_path}}">
+        <img class="item item-image" src="{{tvShowSeasons.backdrop_path}}">
         <p>
-          {{tvShow.overview}}
+          {{tvShowSeasons.overview}}
         </p>
         <p>
-          <a href="#" class="subdued">{{tvShow.number_of_seasons}} seasons</a>
-          <a href="#" class="subdued">{{movie.number_of_episodes}} episodes</a>
+          <a href="#" class="subdued">{{tvShowSeasons.number_of_seasons}} seasons</a>
+          <a href="#" class="subdued">{{tvShowSeasons.number_of_episodes}} episodes</a>
+          <a href="#" class="subdued">Each {{tvShowSeasons.episode_run_time.join(", ")}} Minutes</a>
           <a href="#" class="subdued">In Production: 
-            <span ng-if="tvShow.in_production.adult"> Yese</span>
-            <span ng-if="! tvShow.in_production"> Noi</span>
+            <span ng-if="tvShowSeasons.in_production.adult"> Yese</span>
+            <span ng-if="! tvShowSeasons.in_production"> Noi</span>
           </a>
-          <a href="#" class="subdued">Genres: {{tvShow.show_genre_labels}}</a>
+          <a href="#" class="subdued">Genres: {{tvShowSeasons.show_genre_labels}}</a>
         </p>
       </div>
       <div class="item card">
         <ion-list>
-          <ion-item ng-repeat="tvShowSeason in tvShow.seasons" type="item-text-wrap" href="#/app/tvshow-season/{{tvShow.id}}/{{tvShowSeason.season_number}}">
-          <input type="range" min="0" max="{{tvShowSeason.episodes_count}}" value="5" step="1" readonly disabled>
+          <ion-item ng-repeat="tvShowSeason in tvShowSeasons.seasons" type="item-text-wrap" href="#/app/tvshow-season/{{tvShowSeasons.id}}/{{tvShowSeason.season_number}}">
+          <input type="range" min="0" max="{{tvShowSeason.episode_count}}" value="5" step="1" readonly disabled>
           </ion-item>
         </ion-list>
       </div>      
