@@ -7,7 +7,7 @@ angular.module('watchout.main-controllers', [])
  $scope.openMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
   };
-   Configurations.init();
+   // Configurations.init();
 $scope.goState = function(stateName) {
   $ionicHistory.clearCache();
   $state.go(stateName, {}, {reload: true});

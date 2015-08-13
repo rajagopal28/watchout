@@ -84,76 +84,87 @@ return {
       // this.loadTVShows(scope, currentPage);
         
     },
+    loadTVShowsCallBack : function(scope, pagetoLoad) {
+      return function() {
+        if(!isLoading) {
+          isLoading = true;
+          theMovieDb.discover.getTvShows(discoverWithAttributes,
+          function(data) {
+            var config = Configurations.getConfigurations();
+            // console.log(typeof data)
+            var parsedData = JSON.parse(data);
+            // console.log(parsedData.results);
+            var newShowsPage = parsedData.results;
+            for( var index in newShowsPage) {
+              var newTVShow = newShowsPage[index];
+              // change the poster path
+              var relativeImageURL = newTVShow.poster_path;
+              // console.log(newTVShow);
+              if(relativeImageURL) {
+                  if(!relativeImageURL.startsWith(config.images.base_url)) {
+                    relativeImageURL = config.images.base_url 
+                                        + config.images.poster_sizes[0]
+                                        + relativeImageURL;
+                    newTVShow.poster_path = relativeImageURL;
+                    // console.log(relativeImageURL);
+                  }
+              } else {
+                newTVShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+              }
+              // change the backdrop path
+              relativeImageURL = newTVShow.backdrop_path;
+              if(relativeImageURL) {
+                // console.log(relativeImageURL);
+                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                    relativeImageURL = config.images.base_url  
+                                        + config.images.backdrop_sizes[0]
+                                        + relativeImageURL;
+                    newTVShow.backdrop_path = relativeImageURL;
+                    // console.log(relativeImageURL);
+                  }
+              } else {
+                newTVShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+              }
+              // add genre names
+              var genres = TVGenres.all();
+              var tvShowGenreIds  = newTVShow.genre_ids;
+              var tvShowGenreLabels = '';
+              for(var index in genres) {
+                if(tvShowGenreIds.indexOf(genres[index].id) != -1) {
+                  if(tvShowGenreLabels.length > 0) {
+                    tvShowGenreLabels += ',';
+                  }
+                  tvShowGenreLabels += genres[index].name;
+                }
+              }
+              // set it to list item 
+              newTVShow.show_genre_labels = tvShowGenreLabels;
+              // console.log(tvShowGenreLabels);
+            }
+            tvShows = tvShows.concat(newShowsPage);
+            // console.log(tvShows);
+            scope.tvShows = tvShows;
+            scope.hideSpinner();
+            isLoading = false;
+            currentPage = pagetoLoad + 1;
+            scope.$broadcast('scroll.infiniteScrollComplete');
+          },
+          function(error) {
+            isLoading = false;
+            console.log("Error CB");
+            console.log(error);
+          });
+        }
+      };
+    },
     loadTVShows : function(scope, pagetoLoad) {
       discoverWithAttributes.page = pagetoLoad + 1;
       var config = Configurations.getConfigurations();
-      if(!isLoading) {
-        isLoading = true;
-        theMovieDb.discover.getTvShows(discoverWithAttributes,
-        function(data) {
-          // console.log(typeof data)
-          var parsedData = JSON.parse(data);
-          // console.log(parsedData.results);
-          var newShowsPage = parsedData.results;
-          for( var index in newShowsPage) {
-            var newTVShow = newShowsPage[index];
-            // change the poster path
-            var relativeImageURL = newTVShow.poster_path;
-            // console.log(newTVShow);
-            if(relativeImageURL) {
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
-                  relativeImageURL = config.images.base_url 
-                                      + config.images.poster_sizes[0]
-                                      + relativeImageURL;
-                  newTVShow.poster_path = relativeImageURL;
-                  // console.log(relativeImageURL);
-                }
-            } else {
-              newTVShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
-            }
-            // change the backdrop path
-            relativeImageURL = newTVShow.backdrop_path;
-            if(relativeImageURL) {
-              // console.log(relativeImageURL);
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
-                  relativeImageURL = config.images.base_url  
-                                      + config.images.backdrop_sizes[0]
-                                      + relativeImageURL;
-                  newTVShow.backdrop_path = relativeImageURL;
-                  // console.log(relativeImageURL);
-                }
-            } else {
-              newTVShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
-            }
-            // add genre names
-            var genres = TVGenres.all();
-            var tvShowGenreIds  = newTVShow.genre_ids;
-            var tvShowGenreLabels = '';
-            for(var index in genres) {
-              if(tvShowGenreIds.indexOf(genres[index].id) != -1) {
-                if(tvShowGenreLabels.length > 0) {
-                  tvShowGenreLabels += ',';
-                }
-                tvShowGenreLabels += genres[index].name;
-              }
-            }
-            // set it to list item 
-            newTVShow.show_genre_labels = tvShowGenreLabels;
-            // console.log(tvShowGenreLabels);
-          }
-          tvShows = tvShows.concat(newShowsPage);
-          // console.log(tvShows);
-          scope.tvShows = tvShows;
-          scope.hideSpinner();
-          isLoading = false;
-          currentPage = pagetoLoad + 1;
-          scope.$broadcast('scroll.infiniteScrollComplete');
-        },
-        function(error) {
-          isLoading = false;
-          console.log("Error CB");
-          console.log(error);
-        });
+      if(!config) {
+        Configurations.init(this.loadTVShowsCallBack(scope, pagetoLoad));
+      } else {
+        this.loadTVShowsCallBack(scope, pagetoLoad)();
+        // call the function that is returned by the function
       }
     },
     loadMore : function(scope) {

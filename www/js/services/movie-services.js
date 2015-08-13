@@ -84,11 +84,12 @@ return {
       // this.loadMovies(scope, currentPage);
         
     },
-    loadMovies : function(scope, pagetoLoad) {
-      discoverWithAttributes.page = pagetoLoad + 1;
-      var config = Configurations.getConfigurations();
-      if(!isLoading) {
+    loadMoviesCallBack : function(scope, pagetoLoad) {
+      return function() {
+        var config = Configurations.getConfigurations();
+        if(!isLoading) {
         isLoading = true;
+        console.log(isLoading);
         theMovieDb.discover.getMovies(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
@@ -155,9 +156,24 @@ return {
           isLoading = false;
         });
       }
+      };
+    },
+    loadMovies : function(scope, pagetoLoad) {
+      discoverWithAttributes.page = pagetoLoad + 1;
+      // console.log('in loadMovies');
+      var config = Configurations.getConfigurations();
+      console.log(config);
+      if(!config) {
+        Configurations.init(this.loadMoviesCallBack(scope, pagetoLoad));
+      } else {
+        console.log('in else');
+        this.loadMoviesCallBack(scope, pagetoLoad)();
+      }
+      
     },
     loadMore : function(scope) {
       this.init();
+      // console.log("in loadMore");
       this.loadMovies(scope, currentPage);
     },
     all: function() {
