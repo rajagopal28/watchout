@@ -58,15 +58,61 @@ angular.module('watchout.tvshow-controllers', [])
 .controller('TVShowDetailCtrl',  function($scope,$stateParams, TVShows){
   $scope.tvShow = TVShows.get($stateParams.showId);
 })
-.controller('TVShowSeasonsCtrl',  function($scope,$stateParams,$ionicLoading, TVShowSeasons){
+.controller('TVShowSeasonsCtrl',  function($scope, $stateParams,$ionicLoading,$ionicPopover, TVShowSeasons){
   $scope.tvShowSeasons = TVShowSeasons.get($stateParams.showId);
   console.log($stateParams.showId);
+  $scope.selected = {};
+  $scope.selected.showId = $stateParams.showId;
   if(isObjectEmpty($scope.tvShowSeasons)){
     $ionicLoading.show({
       template: 'Loading...'
     });
     TVShowSeasons.init($stateParams.showId, $scope);
   }
+  $ionicPopover.fromTemplateUrl('templates/season-options-menu.html', {
+    scope: $scope,
+  }).then(function(popover) {
+      $scope.popup = popover;
+  });
+  $scope.showMenu = function($event, showSeasonId) {
+    $scope.popup.show($event);
+    $scope.selected.selectedSeason = showSeasonId;
+    if ($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+    console.log('showing popup for season :' + showSeasonId);
+  };
+  $scope.closePopover = function() {
+    $scope.popup.hide();
+  };
+  $scope.setAllWatched = function() {
+    console.log('setAllWatched');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  $scope.setAllUnWatched = function() {
+    console.log('setAllUnWatched');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  $scope.setAllIgnored = function() {
+    console.log('setAllIgnored');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.popover.remove();
+  });
+  // Execute action on hide popover
+  $scope.$on('popover.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove popover
+  $scope.$on('popover.removed', function() {
+    // Execute action
+  });
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   };

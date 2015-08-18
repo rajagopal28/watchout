@@ -5,6 +5,8 @@
         <img src="{{tvShowSeasons.poster_path}}">
         <h2>{{tvShowSeasons.original_name}}</h2>
         <p>{{tvShowSeasons.first_air_date}} - {{tvShowSeasons.last_air_date}}</p>
+        <p>Created By: {{tvShowSeasons.creators_label}}</p>
+        <p>Networks:{{tvShowSeasons.networks_label}}        </p>
       </div>
       <div class="item item-body">
         <img class="item item-image" src="{{tvShowSeasons.backdrop_path}}">
@@ -25,7 +27,12 @@
       <div class="item card">
         <ion-list>
           <ion-item ng-repeat="tvShowSeason in tvShowSeasons.seasons" type="item-text-wrap" href="#/app/tvshow-season/{{tvShowSeasons.id}}/{{tvShowSeason.season_number}}">
-          <input type="range" min="0" max="{{tvShowSeason.episode_count}}" value="5" step="1" readonly disabled>
+          Season {{tvShowSeason.season_number}}
+          <br/>
+          <input type="range" min="0" max="{{tvShowSeason.episode_count}}" value="5" step="1" readonly disabled> <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.id}}'')"> 
+          </button>
+          <br/>
+          Last Aired : {{tvShowSeason.air_date}}
           </ion-item>
         </ion-list>
       </div>      

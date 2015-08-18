@@ -8,7 +8,7 @@ getDisplayDate = function(inlineDate){
 				+ '-' + dateFragments[0];
 		}
 	}
-	return "";
+	return inlineDate;
 };
 isObjectEmpty = function(tObj) {
 	return Object.keys(tObj).length == 0;

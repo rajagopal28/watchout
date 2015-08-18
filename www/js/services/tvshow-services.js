@@ -85,7 +85,7 @@ angular.module('watchout.tvshow-services', [])
             relativeImageURL = tvShowSeasons.poster_path;
             if(relativeImageURL) {
               tvShowSeasons.poster_path = config.images.base_url 
-                                          + config.images.poster_sizes[0]
+                                          + config.images.poster_sizes[1]
                                           + relativeImageURL;
             }
             // console.log(relativeImageURL);
@@ -100,6 +100,32 @@ angular.module('watchout.tvshow-services', [])
           }
           console.log(genres_label);
           tvShowSeasons.show_genre_labels = genres_label;
+        }
+        if(tvShowSeasons.created_by) {
+          var creatorsLabel = '';
+          for(var index in tvShowSeasons.created_by) {
+            if(index != 0) {
+              creatorsLabel +=", ";
+            }
+            creatorsLabel += tvShowSeasons.created_by[index].name;
+          }
+          tvShowSeasons.creators_label = creatorsLabel;
+        }
+        if(tvShowSeasons.networks) {
+          var networksLabel = '';
+          for(var index in tvShowSeasons.networks) {
+            if(index != 0) {
+              networksLabel +=", ";
+            }
+            networksLabel += tvShowSeasons.networks[index].name;
+          }
+          tvShowSeasons.networks_label = networksLabel;
+        }
+        if(tvShowSeasons.first_air_date) {
+          tvShowSeasons.first_air_date = getDisplayDate(tvShowSeasons.first_air_date);
+        }
+        if(tvShowSeasons.last_air_date) {
+          tvShowSeasons.last_air_date = getDisplayDate(tvShowSeasons.last_air_date);
         }
         if(scope) {       
           console.log(tvShowSeasons);   
@@ -187,7 +213,7 @@ return {
                 // console.log(relativeImageURL);
                 if(!relativeImageURL.startsWith(config.images.base_url)) {
                     relativeImageURL = config.images.base_url  
-                                        + config.images.backdrop_sizes[0]
+                                        + config.images.backdrop_sizes[1]
                                         + relativeImageURL;
                     newTVShow.backdrop_path = relativeImageURL;
                     // console.log(relativeImageURL);
