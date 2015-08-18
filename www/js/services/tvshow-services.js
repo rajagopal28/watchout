@@ -85,7 +85,7 @@ angular.module('watchout.tvshow-services', [])
             relativeImageURL = tvShowSeasons.poster_path;
             if(relativeImageURL) {
               tvShowSeasons.poster_path = config.images.base_url 
-                                          + config.images.poster_sizes[1]
+                                          + config.images.poster_sizes[0]
                                           + relativeImageURL;
             }
             // console.log(relativeImageURL);
@@ -175,7 +175,7 @@ angular.module('watchout.tvshow-services', [])
             var relativeImageURL = tvShowEpisodes.poster_path;
             if(relativeImageURL) {
               tvShowEpisodes.poster_path = config.images.base_url 
-                                          + config.images.poster_sizes[1]
+                                          + config.images.poster_sizes[0]
                                           + relativeImageURL;
             }
             // console.log(relativeImageURL);
@@ -231,7 +231,7 @@ angular.module('watchout.tvshow-services', [])
             var relativeImageURL = tvShowEpisodeDetail.still_path;
             if(relativeImageURL) {
               tvShowEpisodeDetail.still_path = config.images.base_url 
-                                            + config.images.still_sizes[1]
+                                            + config.images.still_sizes[0]
                                             + relativeImageURL;
             }
           //  console.log(relativeImageURL);
@@ -325,7 +325,7 @@ return {
                 // console.log(relativeImageURL);
                 if(!relativeImageURL.startsWith(config.images.base_url)) {
                     relativeImageURL = config.images.base_url  
-                                        + config.images.backdrop_sizes[1]
+                                        + config.images.backdrop_sizes[0]
                                         + relativeImageURL;
                     newTVShow.backdrop_path = relativeImageURL;
                     // console.log(relativeImageURL);
@@ -333,6 +333,7 @@ return {
               } else {
                 newTVShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
               }
+              
               // add genre names
               var genres = TVGenres.all();
               var tvShowGenreIds  = newTVShow.genre_ids;
@@ -395,5 +396,4 @@ return {
     }
   };
 
-}])
-;
+}]);

@@ -206,7 +206,7 @@ angular.module('watchout.tvshow-controllers', [])
 })
 
 .controller('TVShowEpisodeDetailCtrl',  function($scope, $stateParams,$ionicLoading, TVShowEpisodeDetail){
-  $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber);
+  $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber, $scope);
   console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
