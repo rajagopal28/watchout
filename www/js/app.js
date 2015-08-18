@@ -133,6 +133,15 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
         templateUrl: 'templates/tabs/tab-tvshows-selected-seasons.html'
       }
      }
+    })
+    .state('app.tvshow-episodes', {
+      url: '/tvshows_seasons/:showId/:seasonNumber',
+      views: {
+      'mainContent': {        
+        controller: 'TVShowEpisodesCtrl',
+        templateUrl: 'templates/tabs/tab-tvshows-selected-episodes.html'
+      }
+     }
     });  
   $urlRouterProvider.otherwise('/app/home');
 });
