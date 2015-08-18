@@ -204,6 +204,62 @@ angular.module('watchout.tvshow-services', [])
 };
 }])
 
+.factory('TVShowEpisodeDetail', ['Configurations', function(Configurations){
+    var tvShowEpisodeDetail = {};
+    var isLoading = false;
+ return {
+  init : function(showId,seasonNumber,episodeNumber, scope) {
+    tvShowEpisodeDetail = {};
+    var config = Configurations.getConfigurations();
+    if(!config) {
+      Configurations.init(this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, episodeNumber, scope));
+    } else {
+      this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, scope)();
+    }
+  },
+  loadTVShowEpisodeDetailCallBack : function(showId,seasonNumber,episodeNumber,scope) {
+    return function() {
+    if(!isLoading) {
+      isLoading = true;
+      theMovieDb.tvEpisodes.getById({id: showId, season_number: seasonNumber, episode_number : episodeNumber}, 
+      function(data) {        
+        tvShowEpisodeDetail = JSON.parse(data);
+        console.log(tvShowEpisodeDetail);
+        var config = Configurations.getConfigurations();
+        console.log(config);
+        if(config) {
+            var relativeImageURL = tvShowEpisodeDetail.still_path;
+            if(relativeImageURL) {
+              tvShowEpisodeDetail.still_path = config.images.base_url 
+                                            + config.images.still_sizes[1]
+                                            + relativeImageURL;
+            }
+          //  console.log(relativeImageURL);
+        }
+        if(tvShowEpisodeDetail.air_date) {
+          tvShowEpisodeDetail.air_date = getDisplayDate(tvShowEpisodeDetail.air_date);
+        }
+        if(scope) {       
+          console.log(tvShowEpisodeDetail);   
+          scope.tvShowEpisodeDetail = tvShowEpisodeDetail;
+          scope.hideSpinner();
+        }
+        isLoading = false;
+      }, 
+      function(error){
+        console.log('Error CB');
+        console.log(error);
+        isLoading = false;
+      });
+    }
+    };
+  },
+  get: function() {
+    return tvShowEpisodeDetail;
+  }
+};
+}])
+
 .factory('TVShows',  ['TVGenres', 'Configurations', function(TVGenres, Configurations){
   var tvShows = [];
   var currentPage = 0;

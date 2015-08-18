@@ -203,4 +203,28 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   };
+})
+
+.controller('TVShowEpisodeDetailCtrl',  function($scope, $stateParams,$ionicLoading, TVShowEpisodeDetail){
+  $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber);
+  console.log($stateParams.showId);
+  $scope.selected = {};
+  $scope.selected.showId = $stateParams.showId;
+  $scope.selected.seasonNumber = $stateParams.seasonNumber;
+  $scope.selected.episodeNumber = $stateParams.episodeNumber;
+
+  if(isObjectEmpty($scope.tvShowEpisodeDetail)){
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    TVShowEpisodeDetail.init($stateParams.showId,$stateParams.seasonNumber,$stateParams.episodeNumber, $scope);
+  }
+  $scope.setWatchedStatus = function() {
+    console.log('setWatchedStatus');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
 });

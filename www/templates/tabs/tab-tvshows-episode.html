@@ -1,0 +1,36 @@
+<ion-view view-title="{{tvShowEpisodeDetail.name}}">
+  <ion-content class="padding">
+    <div class="list card">
+    <div class="item item-thumbnail-left">
+      <img src="{{tvShow.still_path}}">
+      <h2>{{tvShowEpisodeDetail.name}}</h2>
+      <p>{{tvShowEpisodeDetail.air_date}}</p>
+    </div>
+    <div class="item item-body">
+      <img class="item item-image" src="{{tvShowEpisodeDetail.still_path}}">
+      <p>
+        {{tvShowEpisodeDetail.overview}}
+      </p>
+      <p>
+        <a href="#" class="subdued">{{tvShowEpisodeDetail.vote_count}} votes</a>
+        <a href="#" class="subdued">Vote average {{tvShowEpisodeDetail.vote_average}}</a>
+      </p>
+    </div>
+    <div class="item tabs tabs-secondary tabs-icon-left">
+    <a class="tab-item" href="#">
+      <i class="icon ion-star"></i>
+      Add Favorite
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-music-note"></i>
+      Add watch list
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-clock"></i>
+      Mark Watched
+    </a>
+  </div>
+    </div>
+  </ion-content>
+</ion-view>
+

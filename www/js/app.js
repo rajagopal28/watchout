@@ -135,11 +135,19 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
      }
     })
     .state('app.tvshow-episodes', {
-      url: '/tvshows_seasons/:showId/:seasonNumber',
+      url: '/tvshows_episodes/:showId/:seasonNumber',
       views: {
       'mainContent': {        
         controller: 'TVShowEpisodesCtrl',
         templateUrl: 'templates/tabs/tab-tvshows-selected-episodes.html'
+      }
+     }
+    }).state('app.tvshow-episode-detail', {
+      url: '/tvshows_episode_detail/:showId/:seasonNumber/:episodeNumber',
+      views: {
+      'mainContent': {        
+        controller: 'TVShowEpisodeDetailCtrl',
+        templateUrl: 'templates/tabs/tab-tvshows-episode.html'
       }
      }
     });  
