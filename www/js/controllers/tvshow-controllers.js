@@ -139,4 +139,68 @@ angular.module('watchout.tvshow-controllers', [])
       $scope.fetchMoreTvShows();
     }
   });
+})
+
+.controller('TVShowEpisodesCtrl',  function($scope, $stateParams,$ionicLoading,$ionicPopover, TVShowEpisodes){
+  $scope.tvShowEpisodes = TVShowEpisodes.get($stateParams.showId, $stateParams.seasonNumber);
+  console.log($stateParams.showId + " season : " + $stateParams.seasonNumber);
+  $scope.selected = {};
+  $scope.selected.showId = $stateParams.showId;
+  $scope.selected.seasonNumber = $stateParams.seasonNumber;
+  if(isObjectEmpty($scope.tvShowEpisodes)){
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    TVShowEpisodes.init($stateParams.showId,$stateParams.seasonNumber, $scope);
+  }
+  $ionicPopover.fromTemplateUrl('templates/season-options-menu.html', {
+    scope: $scope,
+  }).then(function(popover) {
+      $scope.popup = popover;
+  });
+  $scope.showMenu = function($event, showEpisodeNumber) {
+    $scope.popup.show($event);
+    $scope.selected.selectedEpisode = showEpisodeNumber;
+    if ($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
+    console.log('showing popup for season :' + showEpisodeNumber);
+  };
+  $scope.changeWatchedStatus = function(episodeNumber, episodeId) {
+    console.log("episodeNumber ="+ episodeNumber + "episodeId="+episodeId);
+  }
+  $scope.closePopover = function() {
+    $scope.popup.hide();
+  };
+  $scope.setAllWatched = function() {
+    console.log('setAllWatched');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  $scope.setAllUnWatched = function() {
+    console.log('setAllUnWatched');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  $scope.setAllIgnored = function() {
+    console.log('setAllIgnored');
+    console.log($scope.selected);
+    $scope.closePopover();
+  };
+  //Cleanup the popover when we're done with it!
+  $scope.$on('$destroy', function() {
+    $scope.popover.remove();
+  });
+  // Execute action on hide popover
+  $scope.$on('popover.hidden', function() {
+    // Execute action
+  });
+  // Execute action on remove popover
+  $scope.$on('popover.removed', function() {
+    // Execute action
+  });
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
 });

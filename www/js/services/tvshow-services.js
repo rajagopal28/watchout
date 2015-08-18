@@ -148,6 +148,62 @@ angular.module('watchout.tvshow-services', [])
 };
 }])
 
+.factory('TVShowEpisodes', ['Configurations', function(Configurations){
+    var tvShowEpisodes = {};
+    var isLoading = false;
+ return {
+  init : function(showId,seasonNumber, scope) {
+    tvShowEpisodes = {};
+    var config = Configurations.getConfigurations();
+    if(!config) {
+      Configurations.init(this.loadTVShowEpisodesCallBack(showId, seasonNumber, scope));
+    } else {
+      this.loadTVShowEpisodesCallBack(showId, seasonNumber, scope)();
+    }
+  },
+  loadTVShowEpisodesCallBack : function(showId,seasonNumber,scope) {
+    return function() {
+    if(!isLoading) {
+      isLoading = true;
+      theMovieDb.tvSeasons.getById({id: showId, season_number: seasonNumber}, 
+      function(data) {        
+        tvShowEpisodes = JSON.parse(data);
+        console.log(tvShowEpisodes);
+        var config = Configurations.getConfigurations();
+        console.log(config);
+        if(config) {
+            var relativeImageURL = tvShowEpisodes.poster_path;
+            if(relativeImageURL) {
+              tvShowEpisodes.poster_path = config.images.base_url 
+                                          + config.images.poster_sizes[1]
+                                          + relativeImageURL;
+            }
+            // console.log(relativeImageURL);
+        }
+        if(tvShowEpisodes.air_date) {
+          tvShowEpisodes.air_date = getDisplayDate(tvShowEpisodes.air_date);
+        }
+        if(scope) {       
+          console.log(tvShowEpisodes);   
+          scope.tvShowEpisodes = tvShowEpisodes;
+          scope.hideSpinner();
+        }
+        isLoading = false;
+      }, 
+      function(error){
+        console.log('Error CB');
+        console.log(error);
+        isLoading = false;
+      });
+    }
+    };
+  },
+  get: function() {
+    return tvShowEpisodes;
+  }
+};
+}])
+
 .factory('TVShows',  ['TVGenres', 'Configurations', function(TVGenres, Configurations){
   var tvShows = [];
   var currentPage = 0;
@@ -283,4 +339,5 @@ return {
     }
   };
 
-}]);
+}])
+;
