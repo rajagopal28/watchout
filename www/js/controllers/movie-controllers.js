@@ -93,6 +93,57 @@ angular.module('watchout.movie-controllers', [])
     }
   });
 })
-.controller('MovieDetailCtrl',  function($scope,$stateParams, Movies){
+.controller('MovieDetailCtrl',  function($scope,$stateParams,$ionicLoading, Movies, MovieDetail){
   $scope.movie = Movies.get($stateParams.movieId);
+  if(!$scope.movie || isObjectEmpty($scope.movie)) {
+    MovieDetail.init();
+    $ionicLoading.show({
+        template: 'Loading...'
+      });
+    MovieDetail.loadMovieDetail($scope, $stateParams.movieId);
+  }
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
+})
+
+.controller('MovieSearchCtrl',  function($scope,$stateParams,$filter, $ionicLoading, MovieSearch){
+  // Movies.init($scope);
+  $scope.movies = [];
+  MovieSearch.init();
+  $scope.selected = {
+    movieName : ''
+  };
+  $scope.searchMovies = function() {
+    console.log('Typing.. ' + $scope.selected.movieName);
+    $scope.fetchMoreMovies();
+  }
+  $scope.remove = function(movie) {
+    Movies.remove(movie);
+  };
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
+  $scope.fetchMoreMovies = function() {
+    if($scope.selected.movieName != '') {
+      // $scope.apply();
+      // Movies.init();
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      console.log('Fetching More Movies...');
+      MovieSearch.loadMore($scope, $scope.selected.movieName);
+    }
+  }
+  $scope.moreDataCanBeLoaded = function() {
+    if($scope.selected.movieName.trim() == '') {
+      return false;
+    }
+    return MovieSearch.isEndOfResults();
+  }
+  $scope.$on('$stateChangeSuccess', function() {
+    if( $scope.selected.movieName != '' && !$scope.movies || $scope.movies.length == 0) {
+      $scope.fetchMoreMovies();
+    }
+  });
 });

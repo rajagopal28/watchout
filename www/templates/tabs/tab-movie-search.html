@@ -1,0 +1,26 @@
+<ion-view view-title="Search Movies">
+  <ion-content>
+   <label class="item item-input">
+    <i class="icon ion-search placeholder-icon"></i>
+    <input type="search" placeholder="Search" ng-model="selected.movieName" ng-click="searchMovies()">
+   </label>
+    <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="movie in movies" type="item-text-wrap" href="#/app/movies/{{movie.id}}">
+        <img ng-src="{{movie.poster_path}}">
+        <h2>{{movie.title}}</h2>
+        <p>{{movie.release_date}}</p>
+        <p>{{movie.movie_genre_labels}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(movie)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+    <ion-infinite-scroll
+      ng-if="moreDataCanBeLoaded()"
+      on-infinite="fetchMoreMovies()"
+      distance="1%">
+   </ion-infinite-scroll>
+  </ion-content>
+</ion-view>

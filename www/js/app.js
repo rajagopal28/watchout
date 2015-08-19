@@ -83,6 +83,15 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
         }
       }      
     })
+    .state('app.movies.search', {
+      url: '/search',
+      views : {
+        'tab-search-movie' : {
+          controller: 'MovieSearchCtrl',
+          templateUrl: 'templates/tabs/tab-movie-search.html'
+        }
+      }      
+    })
     .state('app.movie-selected', {
       url: '/movies/:movieId',
       views: {
