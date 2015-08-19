@@ -214,7 +214,7 @@ angular.module('watchout.tvshow-services', [])
     if(!config) {
       Configurations.init(this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, episodeNumber, scope));
     } else {
-      this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, scope)();
+      this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber,episodeNumber, scope)();
     }
   },
   loadTVShowEpisodeDetailCallBack : function(showId,seasonNumber,episodeNumber,scope) {

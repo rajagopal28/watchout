@@ -23,6 +23,7 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     .state('app', {
       url: '/app',
       abstract : true,
+      cache :false,
       controller : 'MenuCtrl',
       templateUrl: 'templates/menu.html'
     })
@@ -37,6 +38,7 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     })
     .state('app.movies', {
       url: '/movies',
+      cache:false,
       views : {
         'mainContent' : {
           controller: 'HomeCtrl',
@@ -46,6 +48,7 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     })
     .state('app.tvshows', {
       url: '/tvshows',
+      cache:false,
       views : {
         'mainContent' : {
           controller: 'HomeCtrl',
