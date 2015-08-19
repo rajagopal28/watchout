@@ -52,6 +52,252 @@ angular.module('watchout.tvshow-services', [])
  };
 })
 
+.factory('TVShowDetail', ['TVGenres', 'Configurations', function(TVGenres, Configurations){
+  var tvShowDetail ;
+  var isLoading = false;
+return {
+    init : function() {
+        var genres = TVGenres.all();
+        if(genres.length == 0) {
+          TVGenres.init();// init without scope to use genres later
+        }
+        
+    },
+    loadTvShowDetailCallBack : function(scope, tvShowId) {
+      return function() {
+        var config = Configurations.getConfigurations();
+        if(!isLoading) {
+        isLoading = true;
+        console.log(isLoading);
+        theMovieDb.tv.getById({id: tvShowId },
+        function(data) {
+          // console.log(typeof data)
+          var newTvShow = JSON.parse(data);
+          // change the poster path
+          var relativeImageURL = newTvShow.poster_path;
+          // console.log(newTvShow);
+          if(relativeImageURL) {
+              if(!relativeImageURL.startsWith(config.images.base_url)) {
+                relativeImageURL = config.images.base_url 
+                                    + config.images.poster_sizes[0]
+                                    + relativeImageURL;
+                newTvShow.poster_path = relativeImageURL;
+                // console.log(relativeImageURL);
+              }
+          } else {
+            newTvShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+          }
+          // change the backdrop path
+          relativeImageURL = newTvShow.backdrop_path;
+          if(relativeImageURL) {
+            // console.log(relativeImageURL);
+            if(!relativeImageURL.startsWith(config.images.base_url)) {
+                relativeImageURL = config.images.base_url  
+                                    + config.images.backdrop_sizes[0]
+                                    + relativeImageURL;
+                newTvShow.backdrop_path = relativeImageURL;
+                // console.log(relativeImageURL);
+              }
+          } else {
+            newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+          }
+          // add genre names
+          var genres = newTvShow.genres;
+          var tvShowGenreLabels = '';
+          for(var index in genres) {              
+              if(tvShowGenreLabels.length > 0) {
+                tvShowGenreLabels += ',';
+              }
+              tvShowGenreLabels += genres[index].name;
+          }
+          // set it to list item 
+          newTvShow.show_genre_labels = tvShowGenreLabels;
+          // console.log(tvShowGenreLabels);
+          newTvShow.first_air_date = getDisplayDate(newTvShow.first_air_date);
+          newTvShow.last_air_date = getDisplayDate(newTvShow.last_air_date);
+          scope.tvShow = newTvShow;
+          scope.hideSpinner();
+          isLoading = false;
+        },
+        function(error) {
+          console.log("Error CB");
+          console.log(error);
+          isLoading = false;
+        });
+      }
+      };
+    },
+    loadTvShowDetail : function(scope, tvShowId) {
+      // console.log('in loadTvShows');
+      var config = Configurations.getConfigurations();
+      console.log(config);
+      if(!config) {
+        Configurations.init(this.loadTvShowDetailCallBack(scope, tvShowId));
+      } else {
+        console.log('in else');
+        this.loadTvShowDetailCallBack(scope, tvShowId)();
+        // call the function returned by the call back function
+      }
+      
+    }
+  };
+
+}])
+
+.factory('TVShowSearch', ['TVGenres', 'Configurations', function(TVGenres, Configurations){
+  var tvShows = [];
+  var currentPage = 0;
+  var totalPages = 0;
+  
+  var isLoading = false;
+  
+  // console.log(Configurations.getConfigurations());
+  var discoverWithAttributes = {
+    'query' : '',
+    'include_adult' : true,
+    'sort_by' : 'popularity.desc',
+    'page' : currentPage
+  };
+return {
+    init : function(scope) {
+      // initialize if the tvShows list
+      if(tvShows.length == 0) {
+         currentPage = 0;
+        var genres = TVGenres.all();
+        if(genres.length == 0) {
+          TVGenres.init();// init without scope to use genres later
+        }
+      }
+       
+      // this.loadTvShows(scope, currentPage);
+        
+    },
+    loadTvShowsCallBack : function(scope, pagetoLoad) {
+      return function() {
+        var config = Configurations.getConfigurations();
+        if(!isLoading) {
+        isLoading = true;
+        console.log(isLoading);
+        theMovieDb.search.getTv(discoverWithAttributes,
+        function(data) {
+          // console.log(typeof data)
+          var parsedData = JSON.parse(data);
+          // console.log(parsedData.results);
+          var newTvShowsPage = parsedData.results;
+          for( var index in newTvShowsPage) {
+            var newTvShow = newTvShowsPage[index];
+            // change the poster path
+            var relativeImageURL = newTvShow.poster_path;
+            // console.log(newTvShow);
+            if(relativeImageURL) {
+                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                  relativeImageURL = config.images.base_url 
+                                      + config.images.poster_sizes[0]
+                                      + relativeImageURL;
+                  newTvShow.poster_path = relativeImageURL;
+                  // console.log(relativeImageURL);
+                }
+            } else {
+              newTvShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+            }
+            // change the backdrop path
+            relativeImageURL = newTvShow.backdrop_path;
+            if(relativeImageURL) {
+              // console.log(relativeImageURL);
+              if(!relativeImageURL.startsWith(config.images.base_url)) {
+                  relativeImageURL = config.images.base_url  
+                                      + config.images.backdrop_sizes[0]
+                                      + relativeImageURL;
+                  newTvShow.backdrop_path = relativeImageURL;
+                  // console.log(relativeImageURL);
+                }
+            } else {
+              newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+            }
+            // add genre names
+            var genres = TVGenres.all();
+            var tvShowGenreIds  = newTvShow.genre_ids;
+            var tvShowGenreLabels = '';
+            for(var index in genres) {
+              if(tvShowGenreIds.indexOf(genres[index].id) != -1) {
+                if(tvShowGenreLabels.length > 0) {
+                  tvShowGenreLabels += ',';
+                }
+                tvShowGenreLabels += genres[index].name;
+              }
+            }
+            // set it to list item 
+            newTvShow.show_genre_labels = tvShowGenreLabels;
+            // console.log(tvShowGenreLabels);
+          }
+          tvShows = tvShows.concat(newTvShowsPage);
+          // console.log(tvShows);
+          scope.tvShows = tvShows;
+          scope.hideSpinner();
+          isLoading = false;
+          currentPage = pagetoLoad + 1;
+          totalPages = parsedData.total_pages;
+          scope.$broadcast('scroll.infiniteScrollComplete');
+        },
+        function(error) {
+          console.log("Error CB");
+          console.log(error);
+          isLoading = false;
+        });
+      }
+      };
+    },
+    loadTvShows : function(scope, pagetoLoad, queryString) {
+      if(discoverWithAttributes.query != queryString) {
+        discoverWithAttributes.query = queryString;
+        // check whether the query is changes to rest the currentPage
+        tvShows =[];
+        pagetoLoad = 0;// to get page 1
+      }
+      discoverWithAttributes.page = pagetoLoad + 1;
+
+      // console.log('in loadTvShows');
+      var config = Configurations.getConfigurations();
+      console.log(config);
+      if(!config) {
+        Configurations.init(this.loadTvShowsCallBack(scope, pagetoLoad));
+      } else {
+        console.log('in else');
+        this.loadTvShowsCallBack(scope, pagetoLoad)();
+        // call the function returned by the call back function
+      }
+      
+    },
+    loadMore : function(scope, queryString) {
+      this.init();
+      // console.log("in loadMore");
+      this.loadTvShows(scope, currentPage, queryString);
+    },
+    isEndOfResults : function() {
+      if(totalPages != 0 ) {
+        return totalPages == currentPage;
+      }
+      return true;
+    },
+    all: function() {
+      return tvShows;
+    },
+    remove: function(tvShow) {
+      tvShows.splice(tvShows.indexOf(tvShow), 1);
+    },
+    get: function(tvShowId) {
+      for (var i = 0; i < tvShows.length; i++) {
+        if (tvShows[i].id === parseInt(tvShowId)) {
+          return tvShows[i];
+        }
+      }
+      return null;
+    }
+  };
+
+}])
+
+
 .factory('TVShowSeasons', ['Configurations', function(Configurations){
     var tvShowSeasons = {};
     var isLoading = false;

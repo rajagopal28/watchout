@@ -1,5 +1,9 @@
 <ion-view view-title="TV Shows">
   <ion-content>
+    <label class="item item-input">
+      <i class="icon ion-search placeholder-icon"></i>
+      <input type="search" placeholder="Search" ng-model="selected.showName" ng-change="searchShows()">
+     </label>
     <ion-list>
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" href="#/app/tvshows/{{tvShow.id}}">
         <img ng-src="{{tvShow.backdrop_path}}">

@@ -2,23 +2,29 @@ angular.module('watchout.movie-services', [])
 
 .factory('MovieGenres', function(){
     var movieGenres = [];
+    var isLoading = false;
    var selectedMovieGenres = [];
  return {
   init : function(scope) {
-    movieGenres = [];
-    theMovieDb.genres.getList({}, 
-      function(data) {
-        var parsedData = JSON.parse(data);
-        movieGenres = parsedData.genres;
-        if(scope) {          
-          scope.movieGenres = movieGenres;
-          scope.hideSpinner();
-        }
-      }, 
-      function(error){
-        console.log('Error CB');
-        console.log(error);
-      });
+   if(movieGenres.length == 0) {
+    if(!isLoading) {
+      isLoading = true;
+        theMovieDb.genres.getList({}, 
+          function(data) {
+            var parsedData = JSON.parse(data);
+            movieGenres = parsedData.genres;
+            isLoading = false;
+            if(scope) {          
+              scope.movieGenres = movieGenres;
+              scope.hideSpinner();
+            }
+          }, 
+          function(error){
+            console.log('Error CB');
+            console.log(error);
+          });
+    }
+   }
   },
   all: function() {
       for (var i = 0; i < movieGenres.length; i++) {
@@ -369,46 +375,47 @@ return {
         function(data) {
           // console.log(typeof data)
           var newMovie = JSON.parse(data);
-            // change the poster path
-            var relativeImageURL = newMovie.poster_path;
-            // console.log(newMovie);
-            if(relativeImageURL) {
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
-                  relativeImageURL = config.images.base_url 
-                                      + config.images.poster_sizes[0]
-                                      + relativeImageURL;
-                  newMovie.poster_path = relativeImageURL;
-                  // console.log(relativeImageURL);
-                }
-            } else {
-              newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
-            }
-            // change the backdrop path
-            relativeImageURL = newMovie.backdrop_path;
-            if(relativeImageURL) {
-              // console.log(relativeImageURL);
+          // change the poster path
+          var relativeImageURL = newMovie.poster_path;
+          // console.log(newMovie);
+          if(relativeImageURL) {
               if(!relativeImageURL.startsWith(config.images.base_url)) {
-                  relativeImageURL = config.images.base_url  
-                                      + config.images.backdrop_sizes[0]
-                                      + relativeImageURL;
-                  newMovie.backdrop_path = relativeImageURL;
-                  // console.log(relativeImageURL);
-                }
-            } else {
-              newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
-            }
-            // add genre names
-            var genres = newMovie.genres;
-            var movieGenreLabels = '';
-            for(var index in genres) {              
-                if(movieGenreLabels.length > 0) {
-                  movieGenreLabels += ',';
-                }
-                movieGenreLabels += genres[index].name;
-            }
-            // set it to list item 
-            newMovie.movie_genre_labels = movieGenreLabels;
-            // console.log(movieGenreLabels);
+                relativeImageURL = config.images.base_url 
+                                    + config.images.poster_sizes[0]
+                                    + relativeImageURL;
+                newMovie.poster_path = relativeImageURL;
+                // console.log(relativeImageURL);
+              }
+          } else {
+            newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+          }
+          // change the backdrop path
+          relativeImageURL = newMovie.backdrop_path;
+          if(relativeImageURL) {
+            // console.log(relativeImageURL);
+            if(!relativeImageURL.startsWith(config.images.base_url)) {
+                relativeImageURL = config.images.base_url  
+                                    + config.images.backdrop_sizes[0]
+                                    + relativeImageURL;
+                newMovie.backdrop_path = relativeImageURL;
+                // console.log(relativeImageURL);
+              }
+          } else {
+            newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+          }
+          // add genre names
+          var genres = newMovie.genres;
+          var movieGenreLabels = '';
+          for(var index in genres) {              
+              if(movieGenreLabels.length > 0) {
+                movieGenreLabels += ',';
+              }
+              movieGenreLabels += genres[index].name;
+          }
+          // set it to list item 
+          newMovie.movie_genre_labels = movieGenreLabels;
+          // console.log(movieGenreLabels);
+          newMovie.release_date = getDisplayDate(newMovie.release_date);
           scope.movie = newMovie;
           scope.hideSpinner();
           isLoading = false;

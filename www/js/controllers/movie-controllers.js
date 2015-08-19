@@ -93,8 +93,11 @@ angular.module('watchout.movie-controllers', [])
     }
   });
 })
-.controller('MovieDetailCtrl',  function($scope,$stateParams,$ionicLoading, Movies, MovieDetail){
+.controller('MovieDetailCtrl',  function($scope,$stateParams,$ionicLoading, Movies,MovieSearch, MovieDetail){
   $scope.movie = Movies.get($stateParams.movieId);
+  if(!$scope.movie || isObjectEmpty($scope.movie)) {
+    $scope.movie = MovieSearch.get($stateParams.movieId);
+  }
   if(!$scope.movie || isObjectEmpty($scope.movie)) {
     MovieDetail.init();
     $ionicLoading.show({

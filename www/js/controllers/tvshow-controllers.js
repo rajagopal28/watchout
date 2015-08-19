@@ -55,9 +55,23 @@ angular.module('watchout.tvshow-controllers', [])
     console.log(selectedGenres);
  };
 })
-.controller('TVShowDetailCtrl',  function($scope,$stateParams, TVShows){
+.controller('TVShowDetailCtrl',  function($scope,$stateParams,$ionicLoading, TVShows, TVShowSearch, TVShowDetail){
   $scope.tvShow = TVShows.get($stateParams.showId);
+  if(!$scope.tvShow || isObjectEmpty($scope.tvShow)) {
+    $scope.tvShow = TVShowSearch.get($stateParams.showId);
+  }
+  if(!$scope.tvShow || isObjectEmpty($scope.tvShow)) {
+    TVShowDetail.init();
+    $ionicLoading.show({
+        template: 'Loading...'
+      });
+    TVShowDetail.loadTvShowDetail($scope, $stateParams.showId);
+  }
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
 })
+
 .controller('TVShowSeasonsCtrl',  function($scope, $stateParams,$ionicLoading,$ionicPopover, TVShowSeasons){
   $scope.tvShowSeasons = TVShowSeasons.get($stateParams.showId);
   console.log($stateParams.showId);
@@ -117,14 +131,20 @@ angular.module('watchout.tvshow-controllers', [])
     $ionicLoading.hide();
   };
 })
-.controller('TVShowCtrl',  function($scope,$stateParams,$ionicLoading, TVShows){
+.controller('TVShowCtrl',  function($scope,$filter,$stateParams,$ionicLoading, TVShows){
   $scope.tvShows = TVShows.all();
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   };
-  $scope.remove = function(tvShow) {
-    Movies.remove(tvShow);
+  $scope.selected = {
+    showName : ''
   };
+  $scope.searchShows = function() {
+    console.log('Typing.. ' + $scope.selected.showName);
+    var filtered = $filter("filter")(TVShows.all(), {name : $scope.selected.showName});
+    console.log(filtered);
+    $scope.tvShows = filtered;
+  }
   $scope.fetchMoreTvShows = function() {
     // $scope.apply();
     // Movies.init();
@@ -136,6 +156,43 @@ angular.module('watchout.tvshow-controllers', [])
   }
   $scope.$on('$stateChangeSuccess', function() {
     if(!$scope.tvShows || $scope.tvShows.length == 0) {
+      $scope.fetchMoreTvShows();
+    }
+  });
+})
+.controller('TVShowSearchCtrl',  function($scope,$filter,$stateParams,$ionicLoading, TVShowSearch){
+  $scope.tvShows = TVShowSearch.all();
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
+  $scope.selected = {
+    showName : ''
+  };
+  $scope.searchShows = function() {
+    console.log('Typing.. ' + $scope.selected.showName);
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    console.log('Fetching More TV Shows...');
+    TVShowSearch.loadMore($scope, $scope.selected.showName);
+  }
+  $scope.fetchMoreTvShows = function() {
+    // $scope.apply();
+    // Movies.init();
+    $ionicLoading.show({
+      template: 'Loading...'
+    });
+    console.log('Fetching More TV Shows...');
+    TVShowSearch.loadMore($scope, $scope.selected.showName);
+  }
+  $scope.moreDataCanBeLoaded = function() {
+    if($scope.selected.showName.trim() == '') {
+      return false;
+    }
+    return TVShowSearch.isEndOfResults();
+  }
+  $scope.$on('$stateChangeSuccess', function() {
+    if( $scope.selected.showName != '' && !$scope.tvShows || $scope.tvShows.length == 0) {
       $scope.fetchMoreTvShows();
     }
   });
