@@ -56,6 +56,14 @@ angular.module('watchout.tvshow-controllers', [])
  };
 })
 .controller('TVShowDetailCtrl',  function($scope,$stateParams,$ionicLoading, TVShows, TVShowSearch, TVShowDetail){
+  console.log("state show Id =" + $stateParams.showId);
+  if(!$stateParams.showId) {
+    console.log('scope show id =' + $scope.showId);
+    $stateParams.showId = $scope.showId;
+    if(!$scope.showId) {
+      $stateParams.showId = 62560;
+    }
+  }
   $scope.tvShow = TVShows.get($stateParams.showId);
   if(!$scope.tvShow || isObjectEmpty($scope.tvShow)) {
     $scope.tvShow = TVShowSearch.get($stateParams.showId);
@@ -70,6 +78,12 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   };
+})
+
+.controller('TVShowHomeCtrl',  function($scope,$stateParams){
+  $scope.showId = $stateParams.showId;  
+  console.log($stateParams);
+  console.log('moving state params' + $scope.showId);
 })
 
 .controller('TVShowSeasonsCtrl',  function($scope, $stateParams,$ionicLoading,$ionicPopover, TVShowSeasons){
@@ -117,7 +131,7 @@ angular.module('watchout.tvshow-controllers', [])
   };
   //Cleanup the popover when we're done with it!
   $scope.$on('$destroy', function() {
-    $scope.popover.remove();
+    $scope.popup.remove();
   });
   // Execute action on hide popover
   $scope.$on('popover.hidden', function() {
@@ -131,7 +145,7 @@ angular.module('watchout.tvshow-controllers', [])
     $ionicLoading.hide();
   };
 })
-.controller('TVShowCtrl',  function($scope,$filter,$stateParams,$ionicLoading, TVShows){
+.controller('TVShowCtrl',  function($scope,$filter,$stateParams,$ionicLoading,$state,$ionicHistory, TVShows){
   $scope.tvShows = TVShows.all();
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
@@ -160,7 +174,7 @@ angular.module('watchout.tvshow-controllers', [])
     }
   });
 })
-.controller('TVShowSearchCtrl',  function($scope,$filter,$stateParams,$ionicLoading, TVShowSearch){
+.controller('TVShowSearchCtrl',  function($scope,$filter,$stateParams,$ionicLoading,$state,$ionicHistory, TVShowSearch){
   $scope.tvShows = TVShowSearch.all();
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
@@ -247,7 +261,7 @@ angular.module('watchout.tvshow-controllers', [])
   };
   //Cleanup the popover when we're done with it!
   $scope.$on('$destroy', function() {
-    $scope.popover.remove();
+    $scope.popup.remove();
   });
   // Execute action on hide popover
   $scope.$on('popover.hidden', function() {

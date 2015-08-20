@@ -138,18 +138,29 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
       }      
     })
     .state('app.tvshow-selected', {
-      url: '/tvshows/:showId',
+      url: '/tvshow_selected',
+      params : {'showId': '' , 'showName' : ''},
+      cache:false,
+      views : {
+        'mainContent' : {
+          controller: 'TVShowHomeCtrl',
+          templateUrl: 'templates/tvshow-selected.html'
+        }
+      }      
+    })
+    .state('app.tvshow-selected.tvshow-detail', {
+      url: '/tvshow_detail/:showId',
       views: {
-      'mainContent': {        
+      'tab-tvshow-overview': {        
         controller: 'TVShowDetailCtrl',
         templateUrl: 'templates/tabs/tab-tvshows-selected.html'
       }
      }
     })
-    .state('app.tvshow-seasons', {
+    .state('app.tvshow-selected.tvshow-seasons', {
       url: '/tvshows_seasons/:showId',
       views: {
-      'mainContent': {        
+      'tab-season-overview': {        
         controller: 'TVShowSeasonsCtrl',
         templateUrl: 'templates/tabs/tab-tvshows-selected-seasons.html'
       }

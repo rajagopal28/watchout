@@ -8,13 +8,12 @@ angular.module('watchout.main-controllers', [])
     $ionicSideMenuDelegate.toggleLeft();
   };
    // Configurations.init();
-$scope.goState = function(stateName) {
+$scope.goState = function(stateName, stateParams) {
   $ionicHistory.clearCache();
-  $state.go(stateName, {}, {reload: true});
-  setTimeout(function(){
-    $window.location.reload(true);
-  },100);
+  $state.go(stateName, stateParams, {reload: true});
+  
 };
+
 })
 .controller('HomeCtrl', function($scope,$stateParams, $ionicSideMenuDelegate){
   $scope.selected = {
