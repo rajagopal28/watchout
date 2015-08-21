@@ -398,16 +398,16 @@ return {
     var tvShowEpisodes = {};
     var isLoading = false;
  return {
-  init : function(showId,seasonNumber, scope) {
+  init : function(showId,seasonNumber,episodeNumber, scope) {
     tvShowEpisodes = {};
     var config = Configurations.getConfigurations();
     if(!config) {
-      Configurations.init(this.loadTVShowEpisodesCallBack(showId, seasonNumber, scope));
+      Configurations.init(this.loadTVShowEpisodesCallBack(showId, seasonNumber,episodeNumber, scope));
     } else {
-      this.loadTVShowEpisodesCallBack(showId, seasonNumber, scope)();
+      this.loadTVShowEpisodesCallBack(showId, seasonNumber,episodeNumber, scope)();
     }
   },
-  loadTVShowEpisodesCallBack : function(showId,seasonNumber,scope) {
+  loadTVShowEpisodesCallBack : function(showId,seasonNumber,episodeNumber,scope) {
     return function() {
     if(!isLoading) {
       isLoading = true;
@@ -423,15 +423,20 @@ return {
               tvShowEpisodes.poster_path = config.images.base_url 
                                           + config.images.poster_sizes[0]
                                           + relativeImageURL;
+              tvShowEpisodes.poster_path = relativeImageURL;
             }
             // console.log(relativeImageURL);
         }
         if(tvShowEpisodes.air_date) {
           tvShowEpisodes.air_date = getDisplayDate(tvShowEpisodes.air_date);
         }
+        
         if(scope) {       
           console.log(tvShowEpisodes);   
           scope.tvShowEpisodes = tvShowEpisodes;
+          if(episodeNumber) {
+            scope.goToEpisode(episodeNumber);
+          }
           scope.hideSpinner();
         }
         isLoading = false;
@@ -452,9 +457,10 @@ return {
 
 .factory('TVShowEpisodeDetail', ['Configurations', function(Configurations){
     var tvShowEpisodeDetail = {};
+    var validScope;
     var isLoading = false;
  return {
-  init : function(showId,seasonNumber,episodeNumber, scope) {
+  init : function(showId,seasonNumber, episodeNumber, scope) {
     tvShowEpisodeDetail = {};
     var config = Configurations.getConfigurations();
     if(!config) {
@@ -485,10 +491,13 @@ return {
         if(tvShowEpisodeDetail.air_date) {
           tvShowEpisodeDetail.air_date = getDisplayDate(tvShowEpisodeDetail.air_date);
         }
-        if(scope) {       
+        if(scope) {  
+          validScope = scope;
+        }
+        if(validScope) {
           console.log(tvShowEpisodeDetail);   
-          scope.tvShowEpisodeDetail = tvShowEpisodeDetail;
-          scope.hideSpinner();
+          validScope.tvShowEpisodeDetail = tvShowEpisodeDetail;
+          validScope.hideSpinner();
         }
         isLoading = false;
       }, 

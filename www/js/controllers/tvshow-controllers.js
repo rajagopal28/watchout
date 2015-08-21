@@ -212,17 +212,57 @@ angular.module('watchout.tvshow-controllers', [])
   });
 })
 
-.controller('TVShowEpisodesCtrl',  function($scope, $stateParams,$ionicLoading,$ionicPopover, TVShowEpisodes){
-  $scope.tvShowEpisodes = TVShowEpisodes.get($stateParams.showId, $stateParams.seasonNumber);
+.controller('TVShowEpisodesCtrl',  function($scope,$state, $stateParams,$ionicLoading,$ionicPopover, TVShowEpisodes, TVShowEpisodeDetail){
+  $scope.tvShowEpisodes = TVShowEpisodes.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber);
   console.log($stateParams.showId + " season : " + $stateParams.seasonNumber);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
+  $scope.selected.episodeNumber = $stateParams.episodeNumber;
+  $scope.currentIndex = 0;
+
+  $scope.next = function() {
+    console.log($scope.tvShowEpisodes.episodes);
+    var indexValue = 1 * $scope.currentIndex + 1;
+    console.log('Next : ' + $scope.currentIndex + " length =" + $scope.tvShowEpisodes.episodes.length);
+    if($scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes && $scope.tvShowEpisodes.episodes.length > indexValue) {
+      $scope.currentIndex = indexValue;
+      console.log('Next : ' + $scope.currentIndex );
+      console.log($scope.tvShowEpisodes.episodes[$scope.currentIndex]);
+      var episodeNumber = $scope.tvShowEpisodes.episodes[$scope.currentIndex].episode_number;
+      TVShowEpisodeDetail.init($scope.selected.showId, $scope.selected.seasonNumber, episodeNumber, null);
+     }
+  };
+  $scope.previous = function() {
+    var indexValue = 1 * $scope.currentIndex - 1;
+    if($scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes &&  indexValue >= 0 ) {
+      $scope.currentIndex = indexValue;
+      var episodeNumber = $scope.tvShowEpisodes.episodes[$scope.currentIndex].episode_number;
+      TVShowEpisodeDetail.init($scope.selected.showId, $scope.selected.seasonNumber, episodeNumber, null);
+     }
+  };
+  $scope.goToEpisode = function(episodeNumber) {
+      if($stateParams.episodeNumber && $scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes) {
+      for(var index in $scope.tvShowEpisodes.episodes) {
+        if($scope.tvShowEpisodes.episodes[index].episode_number == $stateParams.episodeNumber) {
+          $scope.currentIndex = index;
+          break;
+        }
+      }
+    }
+    $scope.selected.episodeNumber = episodeNumber;
+    $state.go('app.tvshow-all-episodes.selected',$scope.selected);
+    
+  }
+  if($stateParams.episodeNumber) {
+    $scope.goToEpisode($stateParams.episodeNumber);
+  }
+  console.log($stateParams);
   if(isObjectEmpty($scope.tvShowEpisodes)){
     $ionicLoading.show({
       template: 'Loading...'
     });
-    TVShowEpisodes.init($stateParams.showId,$stateParams.seasonNumber, $scope);
+    TVShowEpisodes.init($stateParams.showId,$stateParams.seasonNumber,$stateParams.episodeNumber, $scope);
   }
   $ionicPopover.fromTemplateUrl('templates/season-options-menu.html', {
     scope: $scope,
