@@ -300,6 +300,7 @@ return {
 
 .factory('TVShowSeasons', ['Configurations', function(Configurations){
     var tvShowSeasons = {};
+    var currentInputParams={};
     var isLoading = false;
  return {
   init : function(showId, scope) {
@@ -315,7 +316,8 @@ return {
     return function() {
     if(!isLoading) {
       isLoading = true;
-      theMovieDb.tv.getById({id: showId}, 
+      currentInputParams = {id: showId};
+      theMovieDb.tv.getById(currentInputParams, 
       function(data) {        
         tvShowSeasons = JSON.parse(data);
         var config = Configurations.getConfigurations();
@@ -388,7 +390,10 @@ return {
     }
     };
   },
-  get: function() {
+  get: function(showId) {
+    if(showId != currentInputParams.showId) {
+      tvShowSeasons = {};
+    }
     return tvShowSeasons;
   }
 };
@@ -396,6 +401,7 @@ return {
 
 .factory('TVShowEpisodes', ['Configurations', function(Configurations){
     var tvShowEpisodes = {};
+    var currentInputParams ={};
     var isLoading = false;
  return {
   init : function(showId,seasonNumber,episodeNumber, scope) {
@@ -411,7 +417,8 @@ return {
     return function() {
     if(!isLoading) {
       isLoading = true;
-      theMovieDb.tvSeasons.getById({id: showId, season_number: seasonNumber}, 
+      currentInputParams = {id: showId, season_number: seasonNumber};
+      theMovieDb.tvSeasons.getById(currentInputParams, 
       function(data) {        
         tvShowEpisodes = JSON.parse(data);
         console.log(tvShowEpisodes);
@@ -449,7 +456,10 @@ return {
     }
     };
   },
-  get: function() {
+  get: function(showId,seasonNumber,episodeNumber) {
+    if(showId != currentInputParams.showId || seasonNumber != currentInputParams.seasonNumber) {
+      tvShowEpisodes = {};
+    }
     return tvShowEpisodes;
   }
 };
@@ -457,6 +467,7 @@ return {
 
 .factory('TVShowEpisodeDetail', ['Configurations', function(Configurations){
     var tvShowEpisodeDetail = {};
+    var currentInputParams = {};
     var validScope;
     var isLoading = false;
  return {
@@ -473,7 +484,8 @@ return {
     return function() {
     if(!isLoading) {
       isLoading = true;
-      theMovieDb.tvEpisodes.getById({id: showId, season_number: seasonNumber, episode_number : episodeNumber}, 
+      currentInputParams = {id: showId, season_number: seasonNumber, episode_number : episodeNumber};
+      theMovieDb.tvEpisodes.getById(currentInputParams, 
       function(data) {        
         tvShowEpisodeDetail = JSON.parse(data);
         console.log(tvShowEpisodeDetail);
@@ -509,7 +521,12 @@ return {
     }
     };
   },
-  get: function() {
+  get: function(showId, seasonNumber,episodeNumber) {
+    if(showId != currentInputParams.showId 
+        || seasonNumber != currentInputParams.seasonNumber 
+        || episodeNumber != currentInputParams.episodeNumber) {
+      tvShowEpisodeDetail = {};
+    }
     return tvShowEpisodeDetail;
   }
 };

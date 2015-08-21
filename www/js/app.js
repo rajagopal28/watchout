@@ -139,8 +139,8 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     })
     .state('app.tvshow-selected', {
       url: '/tvshow_selected',
-      params : {'showId': '' , 'showName' : ''},
       cache:false,
+      params : {'showId': '' , 'showName' : ''},
       views : {
         'mainContent' : {
           controller: 'TVShowHomeCtrl',
@@ -149,7 +149,7 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
       }      
     })
     .state('app.tvshow-selected.tvshow-detail', {
-      url: '/tvshow_detail/:showId',
+      url: '/tvshow_detail/:showId',      
       views: {
       'tab-tvshow-overview': {        
         controller: 'TVShowDetailCtrl',
