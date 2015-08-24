@@ -88,6 +88,36 @@ angular.module('watchout.tvshow-controllers', [])
   console.log($stateParams.showId);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
+
+  /*
+    // Fetch the watched episodes count for this show ==> all seasons
+    // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
+    var query = "SELECT seasonnumber, count(episodenumber) as watchedcount FROM watchedepisodes WHERE showid = ? group by seasonnumber";
+        $cordovaSQLite.execute(db, query, [$scope.selected.showId]).then(function(res) {
+            var allRecords = {};
+            if(res.rows.length > 0) {
+                console.log($scope.tvShowSeasons);
+                for(var index = 0 ; index < res.rows.length; index ++) {
+                  var selectedRecord = {};
+                  selectedRecord.watchedcount = res.rows.item(0).watchedcount;
+                  selectedRecord.seasonnumber =  res.rows.item(0).seasonnumber;
+                  allRecords.push(selectedRecord);
+                }
+
+                TVShowSeasons.setMetaData(allRecords);
+                if(isObjectEmpty($scope.tvShowSeasons)){
+                    $ionicLoading.show({
+                      template: 'Loading...'
+                    });
+                    TVShowSeasons.init($stateParams.showId, $scope);
+                }                
+            } else {
+                console.log("No results found");
+            }
+        }, function (err) {
+            console.error(err);
+        });
+  */
   if(isObjectEmpty($scope.tvShowSeasons)){
     $ionicLoading.show({
       template: 'Loading...'
@@ -218,10 +248,7 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
   $scope.currentIndex = 0;
   $scope.totalResults = 0;
-  /*
-    // Fetch the watched episodes count
-    
-  */
+
   $scope.next = function() {
     console.log($scope.tvShowEpisodes.episodes);
     var indexValue = parseInt($scope.currentIndex) + 1;
@@ -328,11 +355,11 @@ angular.module('watchout.tvshow-controllers', [])
   console.log('Loading TVShowEpisodeDetailCtrl');
   /*
     // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
-    var query = "SELECT id, is_watched, is_favourite, is_alerted, alertondate, FROM watchedepisodes WHERE showid = ? and seasonnumber = ? and episodenumber = ?";
+    var query = "SELECT id, is_watched, is_favourite, is_alerted, alertondate FROM watchedepisodes WHERE showid = ? and seasonnumber = ? and episodenumber = ?";
         $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber]).then(function(res) {
             var selectedRecord = {};
             if(res.rows.length > 0) {
-                console.log("SELECTED -> " + res.rows.item(0).firstname + " " + res.rows.item(0).lastname);
+                
                 console.log($scope.tvShowEpisodeDetail);
                 selectedRecord.isWatched = res.rows.item(0).is_watched;
                 selectedRecord.isFavourite =  res.rows.item(0).is_favourite;
@@ -355,7 +382,7 @@ angular.module('watchout.tvshow-controllers', [])
             console.error(err);
         });
   */
-  console.log($scope.tvShowEpisodeDetail);
+  console.log ($scope.tvShowEpisodeDetail);
   if(isObjectEmpty($scope.tvShowEpisodeDetail)){
     $ionicLoading.show({
       template: 'Loading...'
