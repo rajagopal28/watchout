@@ -60,9 +60,6 @@ angular.module('watchout.tvshow-controllers', [])
   if(!$stateParams.showId) {
     console.log('scope show id =' + $scope.showId);
     $stateParams.showId = $scope.showId;
-    if(!$scope.showId) {
-      $stateParams.showId = 62560;
-    }
   }
   $scope.tvShow = TVShows.get($stateParams.showId);
   if(!$scope.tvShow || isObjectEmpty($scope.tvShow)) {
@@ -220,10 +217,11 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
   $scope.currentIndex = 0;
+  $scope.totalResults = 0;
 
   $scope.next = function() {
     console.log($scope.tvShowEpisodes.episodes);
-    var indexValue = 1 * $scope.currentIndex + 1;
+    var indexValue = parseInt($scope.currentIndex) + 1;
     console.log('Next : ' + $scope.currentIndex + " length =" + $scope.tvShowEpisodes.episodes.length);
     if($scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes && $scope.tvShowEpisodes.episodes.length > indexValue) {
       $scope.currentIndex = indexValue;
@@ -234,7 +232,7 @@ angular.module('watchout.tvshow-controllers', [])
      }
   };
   $scope.previous = function() {
-    var indexValue = 1 * $scope.currentIndex - 1;
+    var indexValue =  parseInt($scope.currentIndex) - 1;
     if($scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes &&  indexValue >= 0 ) {
       $scope.currentIndex = indexValue;
       var episodeNumber = $scope.tvShowEpisodes.episodes[$scope.currentIndex].episode_number;
@@ -243,12 +241,13 @@ angular.module('watchout.tvshow-controllers', [])
   };
   $scope.goToEpisode = function(episodeNumber) {
       if($stateParams.episodeNumber && $scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes) {
-      for(var index in $scope.tvShowEpisodes.episodes) {
-        if($scope.tvShowEpisodes.episodes[index].episode_number == $stateParams.episodeNumber) {
-          $scope.currentIndex = index;
-          break;
+        $scope.totalResults = $scope.tvShowEpisodes.episodes.length;
+        for(var index in $scope.tvShowEpisodes.episodes) {
+          if($scope.tvShowEpisodes.episodes[index].episode_number == $stateParams.episodeNumber) {
+            $scope.currentIndex = index;
+            break;
+          }
         }
-      }
     }
     $scope.selected.episodeNumber = episodeNumber;
     $state.go('app.tvshow-all-episodes.selected',$scope.selected);
@@ -317,13 +316,14 @@ angular.module('watchout.tvshow-controllers', [])
 })
 
 .controller('TVShowEpisodeDetailCtrl',  function($scope, $stateParams,$ionicLoading, TVShowEpisodeDetail){
-  $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber);
+  $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber, $scope);
   console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
-
+  console.log('Loading TVShowEpisodeDetailCtrl');
+  console.log($scope.tvShowEpisodeDetail);
   if(isObjectEmpty($scope.tvShowEpisodeDetail)){
     $ionicLoading.show({
       template: 'Loading...'

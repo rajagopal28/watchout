@@ -16,8 +16,8 @@ angular.module('watchout.tvshow-services', [])
         }
       }, 
       function(error){
-        console.log('Error CB');
-        console.log(error);
+        // console.log('Error CB');
+        // console.log(error);
       });
   },
   all: function() {
@@ -25,7 +25,7 @@ angular.module('watchout.tvshow-services', [])
         for (var j=0; j< selectedTVGenres; j++) {
           if(tvGenres[i].id == selectedTVGenres[j].id) {
             tvGenres[i].checked = true;
-            console.log(tvGenres[i]);
+            // console.log(tvGenres[i]);
           }
       }
     }
@@ -68,7 +68,7 @@ return {
         var config = Configurations.getConfigurations();
         if(!isLoading) {
         isLoading = true;
-        console.log(isLoading);
+        // console.log(isLoading);
         theMovieDb.tv.getById({id: tvShowId },
         function(data) {
           // console.log(typeof data)
@@ -130,11 +130,11 @@ return {
     loadTvShowDetail : function(scope, tvShowId) {
       // console.log('in loadTvShows');
       var config = Configurations.getConfigurations();
-      console.log(config);
+      // console.log(config);
       if(!config) {
         Configurations.init(this.loadTvShowDetailCallBack(scope, tvShowId));
       } else {
-        console.log('in else');
+        // console.log('in else');
         this.loadTvShowDetailCallBack(scope, tvShowId)();
         // call the function returned by the call back function
       }
@@ -177,7 +177,7 @@ return {
         var config = Configurations.getConfigurations();
         if(!isLoading) {
         isLoading = true;
-        console.log(isLoading);
+        // console.log(isLoading);
         theMovieDb.search.getTv(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
@@ -258,11 +258,11 @@ return {
 
       // console.log('in loadTvShows');
       var config = Configurations.getConfigurations();
-      console.log(config);
+      // console.log(config);
       if(!config) {
         Configurations.init(this.loadTvShowsCallBack(scope, pagetoLoad));
       } else {
-        console.log('in else');
+        // console.log('in else');
         this.loadTvShowsCallBack(scope, pagetoLoad)();
         // call the function returned by the call back function
       }
@@ -321,7 +321,7 @@ return {
       function(data) {        
         tvShowSeasons = JSON.parse(data);
         var config = Configurations.getConfigurations();
-        console.log(config);
+        // console.log(config);
         if(config) {
             var relativeImageURL = tvShowSeasons.backdrop_path;
             if(relativeImageURL) {
@@ -329,7 +329,7 @@ return {
                                             + config.images.backdrop_sizes[0]
                                             + relativeImageURL;
             }
-           //  console.log(relativeImageURL);
+           //  // console.log(relativeImageURL);
             relativeImageURL = tvShowSeasons.poster_path;
             if(relativeImageURL) {
               tvShowSeasons.poster_path = config.images.base_url 
@@ -346,7 +346,7 @@ return {
             }
             genres_label += tvShowSeasons.genres[i].name;
           }
-          console.log(genres_label);
+          // console.log(genres_label);
           tvShowSeasons.show_genre_labels = genres_label;
         }
         if(tvShowSeasons.created_by) {
@@ -376,7 +376,7 @@ return {
           tvShowSeasons.last_air_date = getDisplayDate(tvShowSeasons.last_air_date);
         }
         if(scope) {       
-          console.log(tvShowSeasons);   
+          // console.log(tvShowSeasons);   
           scope.tvShowSeasons = tvShowSeasons;
           scope.hideSpinner();
         }
@@ -421,9 +421,9 @@ return {
       theMovieDb.tvSeasons.getById(currentInputParams, 
       function(data) {        
         tvShowEpisodes = JSON.parse(data);
-        console.log(tvShowEpisodes);
+        // console.log(tvShowEpisodes);
         var config = Configurations.getConfigurations();
-        console.log(config);
+        // console.log(config);
         if(config) {
             var relativeImageURL = tvShowEpisodes.poster_path;
             if(relativeImageURL) {
@@ -439,7 +439,7 @@ return {
         }
         
         if(scope) {       
-          console.log(tvShowEpisodes);   
+          // console.log(tvShowEpisodes);   
           scope.tvShowEpisodes = tvShowEpisodes;
           if(episodeNumber) {
             scope.goToEpisode(episodeNumber);
@@ -474,6 +474,7 @@ return {
   init : function(showId,seasonNumber, episodeNumber, scope) {
     tvShowEpisodeDetail = {};
     var config = Configurations.getConfigurations();
+    console.log('in TVShowEpisodeDetail init()');
     if(!config) {
       Configurations.init(this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, episodeNumber, scope));
     } else {
@@ -488,17 +489,19 @@ return {
       theMovieDb.tvEpisodes.getById(currentInputParams, 
       function(data) {        
         tvShowEpisodeDetail = JSON.parse(data);
-        console.log(tvShowEpisodeDetail);
+        // console.log(tvShowEpisodeDetail);
         var config = Configurations.getConfigurations();
-        console.log(config);
+        // console.log(config);
         if(config) {
             var relativeImageURL = tvShowEpisodeDetail.still_path;
             if(relativeImageURL) {
               tvShowEpisodeDetail.still_path = config.images.base_url 
                                             + config.images.still_sizes[0]
                                             + relativeImageURL;
+            } else {
+              tvShowEpisodeDetail.still_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
-          //  console.log(relativeImageURL);
+          //  // console.log(relativeImageURL);
         }
         if(tvShowEpisodeDetail.air_date) {
           tvShowEpisodeDetail.air_date = getDisplayDate(tvShowEpisodeDetail.air_date);
@@ -506,8 +509,8 @@ return {
         if(scope) {  
           validScope = scope;
         }
-        if(validScope) {
-          console.log(tvShowEpisodeDetail);   
+         console.log(tvShowEpisodeDetail); 
+        if(validScope) {  
           validScope.tvShowEpisodeDetail = tvShowEpisodeDetail;
           validScope.hideSpinner();
         }
@@ -521,11 +524,13 @@ return {
     }
     };
   },
-  get: function(showId, seasonNumber,episodeNumber) {
+  get: function(showId, seasonNumber,episodeNumber,scope) {
     if(showId != currentInputParams.showId 
         || seasonNumber != currentInputParams.seasonNumber 
         || episodeNumber != currentInputParams.episodeNumber) {
       tvShowEpisodeDetail = {};
+    } else if(scope){
+      validScope = scope;
     }
     return tvShowEpisodeDetail;
   }
@@ -543,7 +548,7 @@ return {
   } else {
     myGenreString ='10765|9648|18|35';
   }
-  console.log(Configurations.getConfigurations());
+  // console.log(Configurations.getConfigurations());
   var discoverWithAttributes = {
     'with_genres' : myGenreString,
     'include_adult' : true,
