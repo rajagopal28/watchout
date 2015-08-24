@@ -390,8 +390,10 @@ return {
               tvShowSeason.last_air_date = new Date(tvShowSeason.last_air_date).toDateString();
             } 
             // get watched episodes count
-
-            
+            tvShowSeason.watched_episodes_count = 0;
+            if(savedSeasonMetaData[tvShowSeason.season_number]) {
+              tvShowSeason.watched_episodes_count = savedSeasonMetaData[tvShowSeason.season_number].watchedcount;
+            }            
           }
         }
         if(scope) {       
@@ -461,6 +463,14 @@ return {
         }
         if(tvShowEpisodes.air_date) {
           tvShowEpisodes.air_date = new Date(tvShowEpisodes.air_date).toDateString();
+        }
+        if(tvShowEpisodes.episodes){
+          for(var index in tvShowEpisodes.episodes) {
+            var episode = tvShowEpisodes.episodes[index];
+            if(savedEpisodesMetaData[episode.episode_number]) {
+              episode.isWatched = savedEpisodesMetaData[episode.episode_number].is_watched == 'Y';
+            }
+          }
         }
         
         if(scope) {       

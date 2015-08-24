@@ -94,14 +94,16 @@ angular.module('watchout.tvshow-controllers', [])
     // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
     var query = "SELECT seasonnumber, count(episodenumber) as watchedcount FROM watchedepisodes WHERE showid = ? group by seasonnumber";
         $cordovaSQLite.execute(db, query, [$scope.selected.showId]).then(function(res) {
-            var allRecords = {};
+            var allRecords = [];
             if(res.rows.length > 0) {
                 console.log($scope.tvShowSeasons);
                 for(var index = 0 ; index < res.rows.length; index ++) {
                   var selectedRecord = {};
                   selectedRecord.watchedcount = res.rows.item(0).watchedcount;
                   selectedRecord.seasonnumber =  res.rows.item(0).seasonnumber;
-                  allRecords.push(selectedRecord);
+                  var temp = {};
+                  temp[selectedRecord.seasonnumber] = selectedRecord;
+                  allRecords.push(temp);
                 }
 
                 TVShowSeasons.setMetaData(allRecords);
@@ -248,6 +250,39 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
   $scope.currentIndex = 0;
   $scope.totalResults = 0;
+  /*
+    // Fetch the watched episodes status for this show and season
+    // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
+    var query = "SELECT episodenumber, is_watched,is_favourite FROM watchedepisodes WHERE showid = ? and seasonnumber = ?";
+        $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber]).then(function(res) {
+            var allRecords = [];
+            if(res.rows.length > 0) {
+                console.log($scope.tvShowSeasons);
+                for(var index = 0 ; index < res.rows.length; index ++) {
+                  var selectedRecord = {};
+                  selectedRecord.is_watched = res.rows.item(0).watchedcount;
+                  selectedRecord.episodenumber =  res.rows.item(0).episodenumber;
+                  selectedRecord.is_favourite = res.rows.item(0).is_favourite;
+                  var temp = {};
+                  temp[selectedRecord.episodenumber] = selectedRecord;
+                  allRecords.push(temp);
+                }
+
+                TVShowEpisodes.setMetaData(allRecords);
+                console.log($stateParams);
+                if(isObjectEmpty($scope.tvShowEpisodes)){
+                  $ionicLoading.show({
+                    template: 'Loading...'
+                  });
+                  TVShowEpisodes.init($stateParams.showId,$stateParams.seasonNumber,$stateParams.episodeNumber, $scope);
+                }                
+            } else {
+                console.log("No results found");
+            }
+        }, function (err) {
+            console.error(err);
+        });
+  */
 
   $scope.next = function() {
     console.log($scope.tvShowEpisodes.episodes);
@@ -282,7 +317,7 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.selected.episodeNumber = episodeNumber;
     $state.go('app.tvshow-all-episodes.selected',$scope.selected);
     
-  }
+  };
   if($stateParams.episodeNumber) {
     $scope.goToEpisode($stateParams.episodeNumber);
   }
