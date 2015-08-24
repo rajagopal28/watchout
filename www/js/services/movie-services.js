@@ -356,6 +356,7 @@ return {
 
 .factory('MovieDetail', ['MovieGenres', 'Configurations', function(MovieGenres, Configurations){
   var movieDetail ;
+  var savedMovieMetaData;
   var isLoading = false;
 return {
     init : function() {
@@ -364,6 +365,9 @@ return {
           MovieGenres.init();// init without scope to use genres later
         }
         
+    },
+    setMetaData : function(metaData) {
+      savedMovieMetaData = metaData;
     },
     loadMovieDetailCallBack : function(scope, movieId) {
       return function() {
@@ -415,7 +419,7 @@ return {
           // set it to list item 
           newMovie.movie_genre_labels = movieGenreLabels;
           // console.log(movieGenreLabels);
-          newMovie.release_date = getDisplayDate(newMovie.release_date);
+          newMovie.release_date = new Date(newMovie.release_date).toDateString();
           scope.movie = newMovie;
           scope.hideSpinner();
           isLoading = false;

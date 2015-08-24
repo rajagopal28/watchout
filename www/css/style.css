@@ -1,4 +1,34 @@
-/* Empty. Add your own CSS if you like */
-.float-right{
-	float:right;
+.styled {
+	position : relative;
+}
+.styled progress {
+  /* Reset the default appearance */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  width: 60%;
+  height: 10px;
+
+  /* Firefox */
+  border: none;
+  background: #EEE;
+  border-radius: 3px;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+}
+
+.styled progress::-webkit-progress-bar {
+  background: #EEE;
+  box-shadow: 0 2px 3px rgba(0,0,0,0.2) inset;
+  border-radius: 3px;
+}
+
+.styled progress::-webkit-progress-value {
+  background-color: #CC8800;
+  border-radius: 3px;
+}
+
+.styled progress::-moz-progress-bar {
+  background-color: #5CD65C;
+  border-radius: 3px;
 }

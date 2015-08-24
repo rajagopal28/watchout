@@ -17,17 +17,29 @@
       </p>
     </div>
     <div class="item tabs tabs-secondary tabs-icon-left">
-    <a class="tab-item" href="#">
-      <i class="icon ion-star"></i>
+    <a class="tab-item" ng-if="tvShowEpisodeDetail.isFavourite" href="#" ng-click="favouriteShow(false)">
+      <i class="icon ion-android-favorite"></i>
+      Remove Favorite
+    </a>
+    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isFavourite" href="#" ng-click="favouriteShow(true)">
+      <i class="icon ion-android-favorite-outline"></i>
       Add Favorite
     </a>
-    <a class="tab-item" href="#">
-      <i class="icon ion-music-note"></i>
-      Add watch list
+    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isAired && !tvShowEpisodeDetail.alertEnabled" href="#" ng-click="alertShow(true)">
+      <i class="icon ion-android-stopwatch"></i>
+      Alert when aired
     </a>
-    <a class="tab-item" href="#">
-      <i class="icon ion-clock"></i>
+    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isAired && tvShowEpisodeDetail.alertEnabled" href="#" ng-click="alertShow(false)">
+      <i class="icon ion-android-close"></i>
+      Remove alert
+    </a>
+    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isWatched" href="#" ng-click="setWatched(true)">
+      <i class="icon ion-android-checkbox-outline-blank"></i>
       Mark Watched
+    </a>
+     <a class="tab-item" ng-if="tvShowEpisodeDetail.isWatched" href="#" ng-click="setWatched(false)">
+      <i class="icon ion-android-checkbox"></i>
+      Set not Watched
     </a>
   </div>
     </div>

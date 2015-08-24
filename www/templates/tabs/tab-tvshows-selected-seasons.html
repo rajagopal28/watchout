@@ -29,8 +29,11 @@
           <ion-item ng-repeat="tvShowSeason in tvShowSeasons.seasons" type="item-text-wrap" href="#/app/tvshows_episodes/{{tvShowSeasons.id}}/{{tvShowSeason.season_number}}">
           Season {{tvShowSeason.season_number}}
           <br/>
-          <input type="range" min="0" max="{{tvShowSeason.episode_count}}" value="5" step="1" readonly disabled> <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.id}}')"> 
+          <div class="styled">
+            <progress max="{{tvShowSeason.episode_count}}" value="5"> </progress>
+            <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.id}}')"> 
           </button>
+          </div>
           <br/>
           Last Aired : {{tvShowSeason.air_date}}
           </ion-item>

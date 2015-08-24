@@ -15,6 +15,19 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
+    /* SQLite Code
+    db = $cordovaSQLite.openDB("watchout.db");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemoviegenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvgenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemovies (id integer primary key, movieid text, moviename text, is_favourite text,, is_alerted text, alert_enabled text"
+                              +" notificationid text, alertondate long, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS favouritemoviesindex ON favouritemovies(movieid)");                    
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvshows (id integer primary key, showid text, showname text, is_favourite text, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS watchedepisodes (id integer primary key, showid text, seasonnumber text,episodenumber text, episodename text,"
+                              +" is_watched text, is_favourite text, is_alerted text, alert_enabled text"
+                              +" notificationid text, alertondate long, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS watchedepisodesindex ON watchedepisodes(showid, seasonnumber, episodenumber)");
+    */
   });
 })
 

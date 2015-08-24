@@ -10,6 +10,7 @@ getDisplayDate = function(inlineDate){
 	}
 	return inlineDate;
 };
+
 isObjectEmpty = function(tObj) {
 	return Object.keys(tObj).length == 0;
 };

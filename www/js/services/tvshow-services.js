@@ -16,8 +16,8 @@ angular.module('watchout.tvshow-services', [])
         }
       }, 
       function(error){
-        // console.log('Error CB');
-        // console.log(error);
+        console.log('Error CB');
+        console.log(error);
       });
   },
   all: function() {
@@ -54,6 +54,7 @@ angular.module('watchout.tvshow-services', [])
 
 .factory('TVShowDetail', ['TVGenres', 'Configurations', function(TVGenres, Configurations){
   var tvShowDetail ;
+  var savedShowMetaData;
   var isLoading = false;
 return {
     init : function() {
@@ -62,6 +63,9 @@ return {
           TVGenres.init();// init without scope to use genres later
         }
         
+    },
+    setMetaData : function(metaData) {
+      savedShowMetaData = metaData;
     },
     loadTvShowDetailCallBack : function(scope, tvShowId) {
       return function() {
@@ -113,8 +117,8 @@ return {
           // set it to list item 
           newTvShow.show_genre_labels = tvShowGenreLabels;
           // console.log(tvShowGenreLabels);
-          newTvShow.first_air_date = getDisplayDate(newTvShow.first_air_date);
-          newTvShow.last_air_date = getDisplayDate(newTvShow.last_air_date);
+          newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
+          newTvShow.last_air_date = new Date(newTvShow.last_air_date).toDateString();
           scope.tvShow = newTvShow;
           scope.hideSpinner();
           isLoading = false;
@@ -300,6 +304,7 @@ return {
 
 .factory('TVShowSeasons', ['Configurations', function(Configurations){
     var tvShowSeasons = {};
+    var savedSeasonMetaData;
     var currentInputParams={};
     var isLoading = false;
  return {
@@ -311,6 +316,9 @@ return {
     } else {
       this.loadTVShowSeasonsCallBack(showId,scope)();
     }
+  },
+  setMetaData : function(metaData) {
+    savedSeasonMetaData = metaData;
   },
   loadTVShowSeasonsCallBack : function(showId,scope) {
     return function() {
@@ -370,10 +378,21 @@ return {
           tvShowSeasons.networks_label = networksLabel;
         }
         if(tvShowSeasons.first_air_date) {
-          tvShowSeasons.first_air_date = getDisplayDate(tvShowSeasons.first_air_date);
+          tvShowSeasons.first_air_date = new Date(tvShowSeasons.first_air_date).toDateString();
         }
         if(tvShowSeasons.last_air_date) {
-          tvShowSeasons.last_air_date = getDisplayDate(tvShowSeasons.last_air_date);
+          tvShowSeasons.last_air_date = new Date(tvShowSeasons.last_air_date).toDateString();
+        }
+        if(tvShowSeasons.seasons) {
+          for(var index in tvShowSeasons.seasons) {
+            var tvShowSeason = tvShowSeasons.seasons[index];
+            if(tvShowSeason.last_air_date) {
+              tvShowSeason.last_air_date = new Date(tvShowSeason.last_air_date).toDateString();
+            } 
+            // get watched episodes count
+
+            
+          }
         }
         if(scope) {       
           // console.log(tvShowSeasons);   
@@ -401,6 +420,7 @@ return {
 
 .factory('TVShowEpisodes', ['Configurations', function(Configurations){
     var tvShowEpisodes = {};
+    var savedEpisodesMetaData;
     var currentInputParams ={};
     var isLoading = false;
  return {
@@ -412,6 +432,9 @@ return {
     } else {
       this.loadTVShowEpisodesCallBack(showId, seasonNumber,episodeNumber, scope)();
     }
+  },
+  setMetaData : function(metaData) {
+    savedEpisodesMetaData = metaData;
   },
   loadTVShowEpisodesCallBack : function(showId,seasonNumber,episodeNumber,scope) {
     return function() {
@@ -431,11 +454,13 @@ return {
                                           + config.images.poster_sizes[0]
                                           + relativeImageURL;
               tvShowEpisodes.poster_path = relativeImageURL;
+            } else {
+              tvShowEpisodes.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
             // console.log(relativeImageURL);
         }
         if(tvShowEpisodes.air_date) {
-          tvShowEpisodes.air_date = getDisplayDate(tvShowEpisodes.air_date);
+          tvShowEpisodes.air_date = new Date(tvShowEpisodes.air_date).toDateString();
         }
         
         if(scope) {       
@@ -467,6 +492,7 @@ return {
 
 .factory('TVShowEpisodeDetail', ['Configurations', function(Configurations){
     var tvShowEpisodeDetail = {};
+    var savedEpisodeMetaData = {};
     var currentInputParams = {};
     var validScope;
     var isLoading = false;
@@ -480,6 +506,9 @@ return {
     } else {
       this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber,episodeNumber, scope)();
     }
+  },
+  setMetaData : function(metaData) {
+    savedEpisodeMetaData = metaData;
   },
   loadTVShowEpisodeDetailCallBack : function(showId,seasonNumber,episodeNumber,scope) {
     return function() {
@@ -504,12 +533,21 @@ return {
           //  // console.log(relativeImageURL);
         }
         if(tvShowEpisodeDetail.air_date) {
-          tvShowEpisodeDetail.air_date = getDisplayDate(tvShowEpisodeDetail.air_date);
+          var airedDate = new Date(tvShowEpisodeDetail.air_date);
+          tvShowEpisodeDetail.air_date = airedDate.toDateString();
+          tvShowEpisodeDetail.isAired = airedDate.getTime() 
+                                        - (new Date()).getTime() < 0;
+          // console.log(tvShowEpisodeDetail.isAired);
+        }
+        if(savedEpisodeMetaData.id) {
+          tvShowEpisodeDetail.alertEnabled = savedEpisodeMetaData.alertEnabled == 'Y';
+          tvShowEpisodeDetail.isFavourite = savedEpisodeMetaData.isFavourite == 'Y';
+          tvShowEpisodeDetail.isWatched = savedEpisodeMetaData.isWatched == 'Y';
         }
         if(scope) {  
           validScope = scope;
         }
-         console.log(tvShowEpisodeDetail); 
+        console.log(tvShowEpisodeDetail); 
         if(validScope) {  
           validScope.tvShowEpisodeDetail = tvShowEpisodeDetail;
           validScope.hideSpinner();
