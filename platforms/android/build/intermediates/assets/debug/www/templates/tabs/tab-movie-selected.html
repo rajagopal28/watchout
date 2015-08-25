@@ -1,0 +1,41 @@
+<ion-view view-title="{{movie.title}}">
+  <ion-content class="padding">
+    <div class="list card">
+    <div class="item item-thumbnail-left">
+      <img src="{{movie.poster_path}}">
+      <h2>{{movie.original_title}}</h2>
+      <p>{{movie.release_date}}</p>
+    </div>
+    <div class="item item-body">
+      <img class="item item-image" src="{{movie.backdrop_path}}">
+      <p>
+        {{movie.overview}}
+      </p>
+      <p>
+        <a href="#" class="subdued">{{movie.vote_count}} votes</a>
+        <a href="#" class="subdued">Popularity {{movie.popularity}}</a>
+        <a href="#" class="subdued">Adult: 
+          <span ng-if="movie.adult"> Yese</span>
+          <span ng-if="! movie.adult"> Noi</span>
+        </a>
+        <a href="#" class="subdued">Genres: {{movie.movie_genre_labels}}</a>
+      </p>
+    </div>
+    <div class="item tabs tabs-secondary tabs-icon-left">
+    <a class="tab-item" href="#">
+      <i class="icon ion-star"></i>
+      Add Favorite
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-music-note"></i>
+      Add watch list
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-android-checkmark-circle"></i>
+      Mark Watched
+    </a>
+  </div>
+    </div>
+  </ion-content>
+</ion-view>
+

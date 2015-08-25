@@ -1,0 +1,31 @@
+<ion-view view-title="Search Movies">
+  <ion-content>
+   <div class="item item-input-inset">
+     <label class="item item-input-wrapper">
+        <i class="icon ion-search placeholder-icon"></i>
+        <input type="search" placeholder="Search" ng-model="selected.showName">
+      </label>
+      <button ng-click="searchShows()" class="button button-small">
+        Go
+      </button>
+    </div>
+    <ion-list>
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" href="#/app/tvshows/{{tvShow.id}}">
+        <img ng-src="{{tvShow.backdrop_path}}">
+        <h2>{{tvShow.original_name}}</h2>
+        <p>{{tvShow.first_air_date}}</p>
+        <p>{{tvShow.show_genre_labels}}</p>
+        <i class="icon ion-chevron-right icon-accessory"></i>
+
+        <ion-option-button class="button-assertive" ng-click="remove(tvShow)">
+          Delete
+        </ion-option-button>
+      </ion-item>
+    </ion-list>
+    <ion-infinite-scroll
+      ng-if="moreDataCanBeLoaded()"
+      on-infinite="fetchMoreMovies()"
+      distance="1%">
+   </ion-infinite-scroll>
+  </ion-content>
+</ion-view>

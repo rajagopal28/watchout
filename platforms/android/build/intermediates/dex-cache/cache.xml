@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\exploded-aar\android\CordovaLib\unspecified\debug\classes.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="b0d3ccc3e2cd88cf265edcd328f525afeb668730">
+        <dex dex="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\classes-6cf24b2a9d47ea64a4031ea8ac19e48fa9c82be9.jar" />
+    </item>
+    <item
+        jar="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\libs\android-support-v4.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="9b6a9a9078af571732159b904ad423b03b7cc786">
+        <dex dex="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\android-support-v4-0cef6f949a8565dce61714a521e975e8da4b02a4.jar" />
+    </item>
+    <item
+        jar="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\libs\sqlite-connector.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="74cbd33faef2706f8fd2c2677cde8b63621b42d3">
+        <dex dex="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\sqlite-connector-8bc4dc3a9f252964fd43de3ebe82d355df90b7ac.jar" />
+    </item>
+    <item
+        jar="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\libs\sqlite-native-driver.jar"
+        jumboMode="false"
+        revision="22.0.1"
+        sha1="21e1864f4da0a023b711602fd7ac6d15cfb5f2c7">
+        <dex dex="C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\sqlite-native-driver-cb00f54045952a0901e6e7ec7183ac39b2cdfc97.jar" />
+    </item>
+
+</items>

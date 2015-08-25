@@ -1,0 +1,44 @@
+<ion-view view-title="{{tvShowSeasons.name}}">
+  <ion-content class="padding">
+    <div class="list card">
+      <div class="item item-thumbnail-left">
+        <img src="{{tvShowSeasons.poster_path}}">
+        <h2>{{tvShowSeasons.original_name}}</h2>
+        <p>{{tvShowSeasons.first_air_date}} - {{tvShowSeasons.last_air_date}}</p>
+        <p>Created By: {{tvShowSeasons.creators_label}}</p>
+        <p>Networks:{{tvShowSeasons.networks_label}}        </p>
+      </div>
+      <div class="item item-body">
+        <img class="item item-image" src="{{tvShowSeasons.backdrop_path}}">
+        <p>
+          {{tvShowSeasons.overview}}
+        </p>
+        <p>
+          <a href="#" class="subdued">{{tvShowSeasons.number_of_seasons}} seasons</a>
+          <a href="#" class="subdued">{{tvShowSeasons.number_of_episodes}} episodes</a>
+          <a href="#" class="subdued">Each {{tvShowSeasons.episode_run_time.join(", ")}} Minutes</a>
+          <a href="#" class="subdued">In Production: 
+            <span ng-if="tvShowSeasons.in_production.adult"> Yese</span>
+            <span ng-if="! tvShowSeasons.in_production"> Noi</span>
+          </a>
+          <a href="#" class="subdued">Genres: {{tvShowSeasons.show_genre_labels}}</a>
+        </p>
+      </div>
+      <div class="item card">
+        <ion-list>
+          <ion-item ng-repeat="tvShowSeason in tvShowSeasons.seasons" type="item-text-wrap" href="#/app/tvshows_episodes/{{tvShowSeasons.id}}/{{tvShowSeason.season_number}}">
+          Season {{tvShowSeason.season_number}}
+          <br/>
+          <div class="styled">
+            <progress max="{{tvShowSeason.episode_count}}" value="5"> </progress>
+            <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.id}}')"> 
+          </button>
+          </div>
+          <br/>
+          Last Aired : {{tvShowSeason.air_date}}
+          </ion-item>
+        </ion-list>
+      </div>      
+    </div>
+  </ion-content>
+</ion-view>

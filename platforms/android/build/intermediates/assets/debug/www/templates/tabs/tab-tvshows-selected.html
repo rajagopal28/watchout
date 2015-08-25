@@ -1,0 +1,41 @@
+<ion-view view-title="{{tvShow.original_name}}">
+  <ion-content class="padding">
+    <div class="list card">
+    <div class="item item-thumbnail-left">
+      <img src="{{tvShow.poster_path}}">
+      <h2>{{tvShow.original_name}}</h2>
+      <p>{{tvShow.first_air_date}}</p>
+    </div>
+    <div class="item item-body">
+      <img class="item item-image" src="{{tvShow.backdrop_path}}">
+      <p>
+        {{tvShow.overview}}
+      </p>
+      <p>
+        <a href="#" class="subdued">{{tvShow.vote_count}} votes</a>
+        <a href="#" class="subdued">Popularity {{tvShow.popularity}}</a>
+        <a href="#" class="subdued">Adult: 
+          <span ng-if="tvShow.adult"> Yese</span>
+          <span ng-if="! tvShow.adult"> Noi</span>
+        </a>
+        <a href="#" class="subdued">Genre: {{tvShow.show_genre_labels}}</a>
+      </p>
+    </div>
+    <div class="item tabs tabs-secondary tabs-icon-left">
+    <a class="tab-item" href="#">
+      <i class="icon ion-star"></i>
+      Add Favorite
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-music-note"></i>
+      Add watch list
+    </a>
+    <a class="tab-item" href="#">
+      <i class="icon ion-clock"></i>
+      Mark Watched
+    </a>
+  </div>
+    </div>
+  </ion-content>
+</ion-view>
+

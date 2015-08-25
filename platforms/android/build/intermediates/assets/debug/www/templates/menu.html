@@ -1,0 +1,32 @@
+<ion-side-menus>
+    <ion-pane ion-side-menu-content>
+        <ion-nav-bar class="bar-balanced nav-title-slide-ios7">
+         <ion-nav-buttons side="left">
+           <button class="button button-icon button-clear ion-navicon" ng-click="openMenu()"></button>
+         </ion-nav-buttons> 
+         <ion-nav-back-button ng-click="goBack()" class="button-icon icon ion-ios7-arrow-back">
+        </ion-nav-back-button>
+        </ion-nav-bar>
+       
+        <ion-nav-view name="mainContent" cache-view="false"> </ion-nav-view>
+      </ion-pane>
+
+    <ion-side-menu side="left">
+        <!-- Left Side Menu content should go here-->
+        <ion-header-bar class="bar bar-header bar-dark">
+        <h1 class="title">Menu</h1>
+    </ion-header-bar> 
+   
+    <ion-content has-header="true">
+       
+        <ion-list>
+            <ion-item nav-clear menu-close href="#/app/movies" >Movies</ion-item> <!-- ng-click="goState('app.movies')"  ng-click="goState('app.tvshows')" -->
+             <ion-item nav-clear menu-close href="#/app/tvshows">Shows</ion-item>
+            <ion-item class="item">Settings</ion-item>
+            <ion-item class="item">About</ion-item>
+            <ion-item class="item">Item 4</ion-item>
+        </ion-list>
+       
+    </ion-content>
+    </ion-side-menu>
+</ion-side-menus>

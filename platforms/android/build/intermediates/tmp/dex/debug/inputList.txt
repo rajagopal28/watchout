@@ -1,0 +1,5 @@
+C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\classes\debug
+C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\sqlite-connector-8bc4dc3a9f252964fd43de3ebe82d355df90b7ac.jar
+C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\classes-6cf24b2a9d47ea64a4031ea8ac19e48fa9c82be9.jar
+C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\android-support-v4-0cef6f949a8565dce61714a521e975e8da4b02a4.jar
+C:\Bitnami\meanstack-2.4.10-0\ionic\Watchout\platforms\android\build\intermediates\pre-dexed\debug\sqlite-native-driver-cb00f54045952a0901e6e7ec7183ac39b2cdfc97.jar

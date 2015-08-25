@@ -1,0 +1,10 @@
+<ion-tabs class="tabs-icon-top tabs-color-active-positive">
+ <!-- Show OVer View Tab -->
+	<ion-tab title="Show Overview" icon-off="ion-easel" icon-on="ion-easel" href="#/app/tvshow_selected/tvshow_detail/{{showId}}">
+    <ion-nav-view name="tab-tvshow-overview"></ion-nav-view>
+  	</ion-tab>
+ <!-- Seasons Overview Tab -->
+  <ion-tab title="Seasons Overview" icon-off="ion-film-marker" icon-on="ion-film-marker" href="#/app/tvshow_selected/tvshows_seasons/{{showId}}">
+    <ion-nav-view name="tab-season-overview"></ion-nav-view>
+  </ion-tab>
+</ion-tabs>
