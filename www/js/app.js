@@ -3,9 +3,9 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-services','watchout.tvshow-services','watchout.main-controllers','watchout.movie-controllers','watchout.tvshow-controllers'])
+angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','watchout.movie-services','watchout.tvshow-services','watchout.main-controllers','watchout.movie-controllers','watchout.tvshow-controllers'])
 
-.run(function($ionicPlatform) {
+.run(function($ionicPlatform, $cordovaSQLite) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -15,7 +15,18 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     if(window.StatusBar) {
       StatusBar.styleDefault();
     }
-    /* SQLite Code
+    if (window.cordova) {
+      document.addEventListener("deviceready", function() {
+        /*
+        window.plugin.notification.local.onadd = onReminderAdd;
+        window.plugin.notification.local.onclick = onSomeAction;
+        window.plugin.notification.local.oncancel = onSomeAction;
+        window.plugin.notification.local.ontrigger = onSomeAction;
+        */
+     }, false);
+    }
+    
+    // SQLite Code
     db = $cordovaSQLite.openDB("watchout.db");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemoviegenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvgenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
@@ -24,10 +35,10 @@ angular.module('watchout', ['ionic','watchout.common-services','watchout.movie-s
     $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS favouritemoviesindex ON favouritemovies(movieid)");                    
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvshows (id integer primary key, showid text, showname text, is_favourite text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS watchedepisodes (id integer primary key, showid text, seasonnumber text,episodenumber text, episodename text,"
-                              +" is_watched text, is_favourite text, is_alerted text, alert_enabled text"
+                              +" is_watched text, is_favourite text, is_alerted text, alert_enabled text,"
                               +" notificationid text, alertondate long, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS watchedepisodesindex ON watchedepisodes(showid, seasonnumber, episodenumber)");
-    */
+    
   });
 })
 

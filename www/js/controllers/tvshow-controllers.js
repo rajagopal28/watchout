@@ -92,7 +92,7 @@ angular.module('watchout.tvshow-controllers', [])
   /*
     // Fetch the watched episodes count for this show ==> all seasons
     // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
-    var query = "SELECT seasonnumber, count(episodenumber) as watchedcount FROM watchedepisodes WHERE showid = ? group by seasonnumber";
+    var query = "SELECT seasonnumber, count(episodenumber) as watchedcount FROM watchedepisodes WHERE showid = ?and is_watched in ('Y', 'I')  group by seasonnumber";
         $cordovaSQLite.execute(db, query, [$scope.selected.showId]).then(function(res) {
             var allRecords = [];
             if(res.rows.length > 0) {
@@ -255,17 +255,15 @@ angular.module('watchout.tvshow-controllers', [])
     // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
     var query = "SELECT episodenumber, is_watched,is_favourite FROM watchedepisodes WHERE showid = ? and seasonnumber = ?";
         $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber]).then(function(res) {
-            var allRecords = [];
+            var allRecords = {};
             if(res.rows.length > 0) {
                 console.log($scope.tvShowSeasons);
                 for(var index = 0 ; index < res.rows.length; index ++) {
                   var selectedRecord = {};
-                  selectedRecord.is_watched = res.rows.item(0).watchedcount;
+                  selectedRecord.is_watched = res.rows.item(0).is_watched;
                   selectedRecord.episodenumber =  res.rows.item(0).episodenumber;
                   selectedRecord.is_favourite = res.rows.item(0).is_favourite;
-                  var temp = {};
-                  temp[selectedRecord.episodenumber] = selectedRecord;
-                  allRecords.push(temp);
+                  allRecords[selectedRecord.episodenumber] = selectedRecord;
                 }
 
                 TVShowEpisodes.setMetaData(allRecords);
@@ -380,7 +378,7 @@ angular.module('watchout.tvshow-controllers', [])
   };
 })
 
-.controller('TVShowEpisodeDetailCtrl',  function($scope, $stateParams,$ionicLoading, TVShowEpisodeDetail){
+.controller('TVShowEpisodeDetailCtrl',  function($scope, $window,$stateParams,$cordovaSQLite,$ionicLoading, TVShowEpisodeDetail){
   $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber, $scope);
   console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
   $scope.selected = {};
@@ -441,28 +439,90 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.tvShowEpisodeDetail.alertEnabled = statusFlag;
     console.log($scope.selected);
     $scope.updateFlag('alert_enabled', statusFlag);
+    
     if(statusFlag) {
       // add a scheduled notification by inserting to DB INSERT
+      /*
+      // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
+      var query = "SELECT MAX(notificationid) as lastnotificationid FROM watchedepisodes";
+          $cordovaSQLite.execute(db, query, []).then(function(res) {
+              var lastnotificationid = 1;
+              if(res.rows.length > 0) {                
+                  lastnotificationid = parseInt(res.rows.item(0).lastnotificationid);
+              } else {
+                  console.log("No results found");
+              }
+              $scope.addNotification(lastnotificationid + 1);
+          }, function (err) {
+              console.error(err);
+          });
+    */
     } else {
       // remove the scheduled notification by fetching the id from DB UPDATE
+      /*
+      // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
+      var query = "SELECT notificationid FROM watchedepisodes where showid = ? and seasonnumber = ? and episodenumber = ?";
+          $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber]).then(function(res) {
+              var notificationid = 1;
+              if(res.rows.length > 0) {                
+                  console.log($scope.tvShowEpisodeDetail);
+                  notificationid = parseInt(res.rows.item(0).notificationid);
+                  cancelNotification({'id' : notificationid},window,$scope)
+              } else {
+                  console.log("No results found");
+              }
+              $scope.addNotification(lastnotificationid + 1);
+          }, function (err) {
+              console.error(err);
+          });
+    */
     }
   };
+
+  $scope.addNotification = function(notificationId) {
+    var alertTime = new Date($scope.tvShowEpisodeDetail.air_date).getTime();
+    var notificationMessage = "The episode *"
+                              + $scope.tvShowEpisodeDetail.name
+                              + "* from this season *"
+                              + $scope.tvShowEpisodeDetail.name
+                              + "* of this series *"
+                              + "* is about to be aired today";
+    var title = "Watchout a new episode";
+    var notificationData = {};
+    notificationData['alertondate'] = alertTime;
+    notificationData['id'] = notificationId;
+    notificationData['title'] = title;
+    notificationData['message'] = message;
+    addNotification(notificationData, window);
+     /*
+      // UPSERT into database
+     var query = "INSERT OR REPLACE INTO watchedepisodes (showid, seasonnumber, episodenumber, "
+                  + "alert_enabled, alertondate, is_alerted, notificationid"
+                  +",lastmodifiedts) VALUES (?,?,?,?,?,?,?,?)";
+        $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber,
+                                             'Y',alertTime,'N', notificationId, (new Date()).getTime()]).then(function(res) {
+           // console.log("INSERT ID -> " + res.insertId);
+        }, function (err) {
+            console.error(err);
+        });
+    */
+  }
+
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   };
   $scope.updateFlag = function(flagName, flagValue) {
     var flagValueString = flagValue ? 'Y' : 'N';
     console.log('updating flag =' + flagName + ' with ' + flagValueString);
-    /*
     // UPSERT into database
-     var query = "INSERT OR REPLACE INTO watchedepisodes (showid, seasonnumber, episodenumber, "
-                  flagname
+     var query = "INSERT OR REPLACE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
+                  + flagName
                   +",lastmodifiedts) VALUES (?,?,?,?,?)";
         $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber, flagValueString, (new Date()).getTime()]).then(function(res) {
             console.log("INSERT ID -> " + res.insertId);
         }, function (err) {
             console.error(err);
         });
-    */
+    
   };
 });

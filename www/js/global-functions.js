@@ -10,6 +10,25 @@ getDisplayDate = function(inlineDate){
 	}
 	return inlineDate;
 };
+addNotification = function(notificationData, windowObj){
+	if(windowObj && !isObjectEmpty(notificationData)) {
+		window.plugin.notification.local.schedule({
+	      id: notificationData.id,
+	      title:   notificationData.title,
+	      message: notificationData.message,
+	      at : notificationData.alertOnDate,
+	      icon:      'ic_notification',
+	      smallIcon: 'ic_notification_small',
+		});
+	}
+};
+cancelNotification = function(notificationData, windowObj,scope){
+	if(windowObj && !isObjectEmpty(notificationData)) {
+		window.plugin.notification.local.cancel(notificationData.id, function() {
+			console.log('Notifcation cancelled : ' + notificationData.id);
+		}, scope);
+	}
+};
 
 isObjectEmpty = function(tObj) {
 	return Object.keys(tObj).length == 0;

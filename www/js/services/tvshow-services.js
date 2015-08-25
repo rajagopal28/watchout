@@ -81,7 +81,7 @@ return {
           var relativeImageURL = newTvShow.poster_path;
           // console.log(newTvShow);
           if(relativeImageURL) {
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
+              if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                 relativeImageURL = config.images.base_url 
                                     + config.images.poster_sizes[0]
                                     + relativeImageURL;
@@ -95,7 +95,7 @@ return {
           relativeImageURL = newTvShow.backdrop_path;
           if(relativeImageURL) {
             // console.log(relativeImageURL);
-            if(!relativeImageURL.startsWith(config.images.base_url)) {
+            if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                 relativeImageURL = config.images.base_url  
                                     + config.images.backdrop_sizes[0]
                                     + relativeImageURL;
@@ -194,7 +194,7 @@ return {
             var relativeImageURL = newTvShow.poster_path;
             // console.log(newTvShow);
             if(relativeImageURL) {
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url 
                                       + config.images.poster_sizes[0]
                                       + relativeImageURL;
@@ -208,7 +208,7 @@ return {
             relativeImageURL = newTvShow.backdrop_path;
             if(relativeImageURL) {
               // console.log(relativeImageURL);
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
+              if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url  
                                       + config.images.backdrop_sizes[0]
                                       + relativeImageURL;
@@ -391,7 +391,7 @@ return {
             } 
             // get watched episodes count
             tvShowSeason.watched_episodes_count = 0;
-            if(savedSeasonMetaData[tvShowSeason.season_number]) {
+            if( savedSeasonMetaData && savedSeasonMetaData[tvShowSeason.season_number]) {
               tvShowSeason.watched_episodes_count = savedSeasonMetaData[tvShowSeason.season_number].watchedcount;
             }            
           }
@@ -467,7 +467,7 @@ return {
         if(tvShowEpisodes.episodes){
           for(var index in tvShowEpisodes.episodes) {
             var episode = tvShowEpisodes.episodes[index];
-            if(savedEpisodesMetaData[episode.episode_number]) {
+            if(savedEpisodesMetaData && savedEpisodesMetaData[episode.episode_number]) {
               episode.isWatched = savedEpisodesMetaData[episode.episode_number].is_watched == 'Y';
             }
           }
@@ -634,7 +634,7 @@ return {
               var relativeImageURL = newTVShow.poster_path;
               // console.log(newTVShow);
               if(relativeImageURL) {
-                  if(!relativeImageURL.startsWith(config.images.base_url)) {
+                  if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                     relativeImageURL = config.images.base_url 
                                         + config.images.poster_sizes[0]
                                         + relativeImageURL;
@@ -648,7 +648,7 @@ return {
               relativeImageURL = newTVShow.backdrop_path;
               if(relativeImageURL) {
                 // console.log(relativeImageURL);
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                     relativeImageURL = config.images.base_url  
                                         + config.images.backdrop_sizes[0]
                                         + relativeImageURL;

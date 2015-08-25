@@ -108,7 +108,7 @@ return {
             var relativeImageURL = newMovie.poster_path;
             // console.log(newMovie);
             if(relativeImageURL) {
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url 
                                       + config.images.poster_sizes[0]
                                       + relativeImageURL;
@@ -122,7 +122,7 @@ return {
             relativeImageURL = newMovie.backdrop_path;
             if(relativeImageURL) {
               // console.log(relativeImageURL);
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
+              if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url  
                                       + config.images.backdrop_sizes[0]
                                       + relativeImageURL;
@@ -247,7 +247,7 @@ return {
             var relativeImageURL = newMovie.poster_path;
             // console.log(newMovie);
             if(relativeImageURL) {
-                if(!relativeImageURL.startsWith(config.images.base_url)) {
+                if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url 
                                       + config.images.poster_sizes[0]
                                       + relativeImageURL;
@@ -261,7 +261,7 @@ return {
             relativeImageURL = newMovie.backdrop_path;
             if(relativeImageURL) {
               // console.log(relativeImageURL);
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
+              if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                   relativeImageURL = config.images.base_url  
                                       + config.images.backdrop_sizes[0]
                                       + relativeImageURL;
@@ -383,7 +383,7 @@ return {
           var relativeImageURL = newMovie.poster_path;
           // console.log(newMovie);
           if(relativeImageURL) {
-              if(!relativeImageURL.startsWith(config.images.base_url)) {
+              if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                 relativeImageURL = config.images.base_url 
                                     + config.images.poster_sizes[0]
                                     + relativeImageURL;
@@ -397,7 +397,7 @@ return {
           relativeImageURL = newMovie.backdrop_path;
           if(relativeImageURL) {
             // console.log(relativeImageURL);
-            if(!relativeImageURL.startsWith(config.images.base_url)) {
+            if(relativeImageURL.indexOf(config.images.base_url) != 0) {
                 relativeImageURL = config.images.base_url  
                                     + config.images.backdrop_sizes[0]
                                     + relativeImageURL;
