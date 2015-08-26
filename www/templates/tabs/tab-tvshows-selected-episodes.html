@@ -2,9 +2,9 @@
   <ion-content>
     <ion-list>
      <ion-item ng-repeat="tvShowEpisode in tvShowEpisodes.episodes" type="item-text-wrap" ui-sref="app.tvshow-all-episodes({'showId' : '{{selected.showId}}', 'seasonNumber' : '{{selected.seasonNumber}}', 'episodeNumber' : '{{tvShowEpisode.episode_number}}' })" >
-     <ion-checkbox ng-model="tvShowEpisode.isWatched" ng-change="changeWatchedStatus('{{tvShowEpisode.episode_number}}','{{tvShowEpisode.id}}')" ng-checked="tvShowEpisode.isWatched"> {{tvShowEpisode.name}} - Aired : {{tvShowEpisode.air_date}}</ion-checkbox> 
+     <ion-checkbox ng-model="tvShowEpisode.isWatched" ng-change="changeWatchedStatus('{{tvShowEpisode.episode_number}}',$index)" ng-checked="tvShowEpisode.isWatched"> {{tvShowEpisode.name}} - Aired : {{tvShowEpisode.air_date}}</ion-checkbox> 
     
-     <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowEpisode.episode_number}}')"> 
+     <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowEpisode.episode_number}}',$index)"> 
           </button>
     </ion-item>
     </ion-list>
