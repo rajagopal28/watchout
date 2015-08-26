@@ -386,8 +386,8 @@ return {
         if(tvShowSeasons.seasons) {
           for(var index in tvShowSeasons.seasons) {
             var tvShowSeason = tvShowSeasons.seasons[index];
-            if(tvShowSeason.last_air_date) {
-              tvShowSeason.last_air_date = new Date(tvShowSeason.last_air_date).toDateString();
+            if(tvShowSeason.air_date) {
+              tvShowSeason.air_date = new Date(tvShowSeason.air_date).toDateString();
             } 
             // get watched episodes count
             tvShowSeason.watched_episodes_count = 0;

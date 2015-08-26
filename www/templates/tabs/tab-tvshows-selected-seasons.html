@@ -30,8 +30,8 @@
           Season {{tvShowSeason.season_number}}
           <br/>
           <div class="styled">
-            <progress max="{{tvShowSeason.episode_count}}" value="5"> </progress>
-            <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.id}}')"> 
+            <progress max="{{tvShowSeason.episode_count}}" value="{{tvShowSeason.watched_episodes_count}}"> </progress>
+            <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.season_number}}',$index)"> 
           </button>
           </div>
           <br/>
