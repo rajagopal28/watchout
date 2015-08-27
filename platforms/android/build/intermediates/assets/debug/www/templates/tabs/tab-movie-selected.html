@@ -22,17 +22,21 @@
       </p>
     </div>
     <div class="item tabs tabs-secondary tabs-icon-left">
-    <a class="tab-item" href="#">
-      <i class="icon ion-star"></i>
-      Add Favorite
+    <a class="tab-item" ng-click="removeFavourite()" ng-if="movie.isFavourite" href="#">
+      <i class="icon ion-heart"></i>
+      Your Favourite
     </a>
-    <a class="tab-item" href="#">
-      <i class="icon ion-music-note"></i>
-      Add watch list
+    <a class="tab-item" ng-if="!movie.isFavourite" ng-click="setFavourite()" href="#">
+      <i class="icon ion-android-favorite-outline"></i>
+      Set Favourite
     </a>
-    <a class="tab-item" href="#">
-      <i class="icon ion-android-checkmark-circle"></i>
-      Mark Watched
+    <a class="tab-item" ng-if="!movie.isReleased && !movie.alertEnabled" href="#" ng-click="alertMovie(true)">
+      <i class="icon ion-android-stopwatch"></i>
+      Alert when aired
+    </a>
+    <a class="tab-item" ng-if="!movie.isReleased && movie.alertEnabled" href="#" ng-click="alertShow(false)">
+      <i class="icon ion-android-close"></i>
+      Remove alert
     </a>
   </div>
     </div>

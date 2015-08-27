@@ -28,7 +28,7 @@ angular.module('watchout.movie-services', [])
   },
   all: function() {
       for (var i = 0; i < movieGenres.length; i++) {
-        for (var j=0; j< selectedMovieGenres; j++) {
+        for (var j=0; j< selectedMovieGenres.length; j++) {
           if(movieGenres[i].id == selectedMovieGenres[j].id) {
             movieGenres[i].checked = true;
             console.log(movieGenres[i]);
@@ -65,7 +65,13 @@ angular.module('watchout.movie-services', [])
   var myGenreString = '';
   var isLoading = false;
   if(myGenres && myGenres.length > 0) {
-    myGenreString = myGenres.join('|');
+    for(var index = 0; index < myGenres.length; index++) {
+      if(index != 0){
+        myGenreString +="|";
+      }
+      myGenreString += myGenres[index].id;
+    }
+    console.log("myGenreString = " +myGenreString);
   } else {
     myGenreString ='10765|9648|18|35';
   }
@@ -285,6 +291,8 @@ return {
             }
             // set it to list item 
             newMovie.movie_genre_labels = movieGenreLabels;
+            newMovie.release_date = new Date(newMovie.release_date).toDateString();
+            newMovie.isReleased = (new Date(newMovie.release_date)).getTime() - (new Date()).getTime() <= 0 ;
             // console.log(movieGenreLabels);
           }
           movies = movies.concat(newMoviesPage);
@@ -407,6 +415,12 @@ return {
           } else {
             newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
           }
+          if(savedMovieMetaData && !isObjectEmpty(savedMovieMetaData)){
+            newMovie.isFavourite = savedMovieMetaData.isFavourite == 'Y';
+            newMovie.isAlerted = savedMovieMetaData.isAlerted == 'Y';
+            newMovie.alertEnabled = savedMovieMetaData.alertEnabled == 'Y';
+            newMovie.alertDate = savedMovieMetaData.alertDate.toDateString();
+          }
           // add genre names
           var genres = newMovie.genres;
           var movieGenreLabels = '';
@@ -420,6 +434,7 @@ return {
           newMovie.movie_genre_labels = movieGenreLabels;
           // console.log(movieGenreLabels);
           newMovie.release_date = new Date(newMovie.release_date).toDateString();
+          newMovie.isReleased = (new Date(newMovie.release_date)).getTime() - (new Date()).getTime() < 0 ;
           scope.movie = newMovie;
           scope.hideSpinner();
           isLoading = false;

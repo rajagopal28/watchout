@@ -19,24 +19,20 @@ angular.module('watchout.tvshow-controllers', [])
       } else {
         console.log('No Rows...');
       }
-      $scope.tvGenres =  TVGenres.all();
-        if($scope.tvGenres.length == 0) {
-          $ionicLoading.show({
-            template: 'Loading...'
-          });
-          TVGenres.init($scope);
-        }
+      $scope.setGenres();
     });
   } else {
-    $scope.tvGenres =  TVGenres.all();
-        if($scope.tvGenres.length == 0) {
-          $ionicLoading.show({
-            template: 'Loading...'
-          });
-          TVGenres.init($scope);
-        }
+    $scope.setGenres();
   }
-  
+  $scope.setGenres = function(){
+    $scope.tvGenres =  TVGenres.all();
+    if($scope.tvGenres.length == 0) {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      TVGenres.init($scope);
+    }
+  };
   
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
@@ -45,7 +41,7 @@ angular.module('watchout.tvshow-controllers', [])
     TVGenres.remove(tvGenre);
   }; 
    $scope.saveFavoriteGenre = function() {
-  console.log('Saving favourite genre');
+    console.log('Saving favourite genre');
     var selectedGenres = $filter("filter")($scope.tvGenres, {checked: true});
     var query = "delete from favouritetvgenres";
     $cordovaSQLite.execute(db, query);
@@ -666,7 +662,7 @@ angular.module('watchout.tvshow-controllers', [])
                               + "* is about to be aired today";
     var title = "Watchout a new episode";
     var notificationData = {};
-    notificationData['alertondate'] = new Date().getTime() + 2000;//alertTime;
+    notificationData['alertondate'] = alertTime;
     notificationData['id'] = notificationId;
     notificationData['title'] = title;
     notificationData['message'] = notificationMessage;
