@@ -36,7 +36,7 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvshows (id integer primary key, showid text, showname text, is_favourite text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS watchedepisodes (id integer primary key, showid text, seasonnumber text,episodenumber text, episodename text,"
                               +" is_watched text, is_favourite text, is_alerted text, alert_enabled text,"
-                              +" notificationid text, alertondate long, createdts long, lastmodifiedts long)");
+                              +" notificationid integer, alertondate long, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS watchedepisodesindex ON watchedepisodes(showid, seasonnumber, episodenumber)");
     
   });

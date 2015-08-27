@@ -551,24 +551,25 @@ angular.module('watchout.tvshow-controllers', [])
     
     if(statusFlag) {
       // add a scheduled notification by inserting to DB INSERT
-      /*
       // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
       var query = "SELECT MAX(notificationid) as lastnotificationid FROM watchedepisodes";
           $cordovaSQLite.execute(db, query, []).then(function(res) {
-              var lastnotificationid = 1;
+              var lastnotificationid = 0;
               if(res.rows.length > 0) {                
-                  lastnotificationid = parseInt(res.rows.item(0).lastnotificationid);
+                  // console.log(res.rows.item(0).lastnotificationid);
+                  if(res.rows.item(0).lastnotificationid) {
+                    lastnotificationid = parseInt(res.rows.item(0).lastnotificationid);
+                  }                  
               } else {
                   console.log("No results found");
               }
+              console.log("lastnotificationid = " + lastnotificationid);
               $scope.addNotification(lastnotificationid + 1);
           }, function (err) {
               console.error(err);
           });
-    */
     } else {
       // remove the scheduled notification by fetching the id from DB UPDATE
-      /*
       // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
       var query = "SELECT notificationid FROM watchedepisodes where showid = ? and seasonnumber = ? and episodenumber = ?";
           $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber]).then(function(res) {
@@ -580,11 +581,9 @@ angular.module('watchout.tvshow-controllers', [])
               } else {
                   console.log("No results found");
               }
-              $scope.addNotification(lastnotificationid + 1);
           }, function (err) {
               console.error(err);
           });
-    */
     }
   };
 
@@ -598,19 +597,18 @@ angular.module('watchout.tvshow-controllers', [])
                               + "* is about to be aired today";
     var title = "Watchout a new episode";
     var notificationData = {};
-    notificationData['alertondate'] = alertTime;
+    notificationData['alertondate'] = new Date().getTime() + 2000;//alertTime;
     notificationData['id'] = notificationId;
     notificationData['title'] = title;
-    notificationData['message'] = message;
+    notificationData['message'] = notificationMessage;
     addNotification(notificationData, window);
-     /*
       // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "
                   + "alert_enabled, alertondate, is_alerted, notificationid"
                   +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?,?)";
       $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber,
                                            'Y',alertTime,'N', notificationId, (new Date()).getTime(), (new Date()).getTime()]).then(function(res) {
-         // console.log("INSERT ID -> " + res.insertId);
+         console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
           console.error(err);
       });
@@ -626,7 +624,6 @@ angular.module('watchout.tvshow-controllers', [])
       }, function (err) {
           console.error(err);
       });
-    */
   }
 
   $scope.hideSpinner = function() {
