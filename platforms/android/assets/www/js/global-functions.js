@@ -34,13 +34,15 @@ isObjectEmpty = function(tObj) {
 	return Object.keys(tObj).length == 0;
 };
 
-getSaveGenresFunction = function(id, tx,tableName){
+getSaveGenresFunction = function(genre, tx,tableName){
   return function() {
-    var query = "insert into "+ tableName+"(genreid) values(?)";
-      tx.executeSql(query, [''+id], function(tx, res) {
+    var query = "insert into "+ tableName+"(genreid, genrename) values(?,?)";
+      tx.executeSql(query, [genre.id, genre.name], function(tx, res) {
           console.log("Inserting Genre :"+ id);
       }, function (err) {
           console.error(err);
+          console.log("ERROR : " + err.message);
+          return true;
       });
   };
 };

@@ -11,7 +11,7 @@ angular.module('watchout.tvshow-services', [])
         var parsedData = JSON.parse(data);
         tvGenres = parsedData.genres;
         if(scope) {          
-          scope.tvGenres = tvGenres;
+          scope.tvGenres = all();
           scope.hideSpinner();
         }
       }, 
@@ -21,14 +21,7 @@ angular.module('watchout.tvshow-services', [])
       });
   },
   all: function() {
-      for (var i = 0; i < tvGenres.length; i++) {
-        for (var j=0; j< selectedTVGenres; j++) {
-          if(tvGenres[i].id == selectedTVGenres[j].id) {
-            tvGenres[i].checked = true;
-            // console.log(tvGenres[i]);
-          }
-      }
-    }
+    //console.log("all()");
     return tvGenres;
   },
   get: function(tvGenreId) {
@@ -45,6 +38,14 @@ angular.module('watchout.tvshow-services', [])
   },
   saveFavoriteGenres: function(selectedGenres) {
     selectedTVGenres = selectedGenres;
+    for (var i = 0; i < tvGenres.length; i++) {
+        for (var j=0; j< selectedTVGenres.length; j++) {
+          if(tvGenres[i].id == selectedTVGenres[j].id) {
+            tvGenres[i].checked = true;
+            // console.log(tvGenres[i]);
+          }
+      }
+    }
   },
   getFavouriteGenres: function(){
     return selectedTVGenres;
@@ -116,6 +117,10 @@ return {
           }
           // set it to list item 
           newTvShow.show_genre_labels = tvShowGenreLabels;
+          // set from metadata
+          if(savedShowMetaData && !isObjectEmpty(savedShowMetaData)){
+            newTvShow.isFavourite = savedShowMetaData.is_favourite == 'Y';
+          }
           // console.log(tvShowGenreLabels);
           newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
           newTvShow.last_air_date = new Date(newTvShow.last_air_date).toDateString();
@@ -179,6 +184,7 @@ return {
     loadTvShowsCallBack : function(scope, pagetoLoad) {
       return function() {
         var config = Configurations.getConfigurations();
+        var genres = TVGenres.all();
         if(!isLoading) {
         isLoading = true;
         // console.log(isLoading);
@@ -219,7 +225,6 @@ return {
               newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
             // add genre names
-            var genres = TVGenres.all();
             var tvShowGenreIds  = newTvShow.genre_ids;
             var tvShowGenreLabels = '';
             for(var index in genres) {
@@ -468,6 +473,7 @@ return {
           for(var index in tvShowEpisodes.episodes) {
             var episode = tvShowEpisodes.episodes[index];
             if(savedEpisodesMetaData && savedEpisodesMetaData[episode.episode_number]) {
+              episode.air_date = new Date(episode.air_date).toDateString();
               episode.isWatched = savedEpisodesMetaData[episode.episode_number].is_watched == 'Y';
             }
           }
@@ -592,7 +598,13 @@ return {
   var myGenres = TVGenres.getFavouriteGenres();
   var myGenreString = '';
   if(myGenres && myGenres.length > 0) {
-    myGenreString = myGenres.join('|');
+    for(var index = 0; index < myGenres.length; index++) {
+      if(index != 0){
+        myGenreString +="|";
+      }
+      myGenreString += myGenres[index].id;
+    }
+    console.log("myGenreString = " +myGenreString);
   } else {
     myGenreString ='10765|9648|18|35';
   }
@@ -604,7 +616,7 @@ return {
     'page' : currentPage
   };
 return {
-    init : function(scope) {
+    init : function() {
       // initialize if the tv shows list
       if(tvShows.length == 0) {
          currentPage = 0;
@@ -617,10 +629,15 @@ return {
       // this.loadTVShows(scope, currentPage);
         
     },
+    reset : function(){
+      tvShows = [];
+      this.init();
+    },
     loadTVShowsCallBack : function(scope, pagetoLoad) {
       return function() {
         if(!isLoading) {
           isLoading = true;
+          var genres = TVGenres.all();
           theMovieDb.discover.getTvShows(discoverWithAttributes,
           function(data) {
             var config = Configurations.getConfigurations();
@@ -660,7 +677,6 @@ return {
               }
               
               // add genre names
-              var genres = TVGenres.all();
               var tvShowGenreIds  = newTVShow.genre_ids;
               var tvShowGenreLabels = '';
               for(var index in genres) {
