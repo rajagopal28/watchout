@@ -27,6 +27,14 @@ angular.module('watchout.tvshow-controllers', [])
           TVGenres.init($scope);
         }
     });
+  } else {
+    $scope.tvGenres =  TVGenres.all();
+        if($scope.tvGenres.length == 0) {
+          $ionicLoading.show({
+            template: 'Loading...'
+          });
+          TVGenres.init($scope);
+        }
   }
   
   
