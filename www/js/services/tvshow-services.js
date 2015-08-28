@@ -224,6 +224,7 @@ return {
             } else {
               newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
+            newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
             // add genre names
             var tvShowGenreIds  = newTvShow.genre_ids;
             var tvShowGenreLabels = '';
@@ -341,6 +342,8 @@ return {
               tvShowSeasons.backdrop_path = config.images.base_url 
                                             + config.images.backdrop_sizes[0]
                                             + relativeImageURL;
+            } else {
+              newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
            //  // console.log(relativeImageURL);
             relativeImageURL = tvShowSeasons.poster_path;
@@ -348,6 +351,8 @@ return {
               tvShowSeasons.poster_path = config.images.base_url 
                                           + config.images.poster_sizes[0]
                                           + relativeImageURL;
+            } else {
+              newTvShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
             // console.log(relativeImageURL);
         }
