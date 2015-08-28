@@ -10,7 +10,7 @@
       </button>
     </div>
     <ion-list>
-      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" href="#/app/tvshows/{{tvShow.id}}">
+      <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" ui-sref="app.tvshow-selected({'showId' : '{{tvShow.id}}'})">
         <img ng-src="{{tvShow.backdrop_path}}">
         <h2>{{tvShow.original_name}}</h2>
         <p>{{tvShow.first_air_date}}</p>

@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','watchout.movie-services','watchout.tvshow-services','watchout.main-controllers','watchout.movie-controllers','watchout.tvshow-controllers'])
+angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','watchout.movie-services','watchout.tvshow-services','watchout.main-controllers','watchout.movie-controllers','watchout.tvshow-controllers','watchout.tvshow-list-controllers'])
 
 .run(function($ionicPlatform, $cordovaSQLite) {
   $ionicPlatform.ready(function() {
