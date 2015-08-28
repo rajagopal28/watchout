@@ -16,12 +16,12 @@ angular.module('watchout.tvshow-services', [])
         }
       }, 
       function(error){
-        console.log('Error CB');
-        console.log(error);
+        // console.log('Error CB');
+        // console.log(error);
       });
   },
   all: function() {
-    //console.log("all()");
+    //// console.log("all()");
     return tvGenres;
   },
   get: function(tvGenreId) {
@@ -129,8 +129,8 @@ return {
           isLoading = false;
         },
         function(error) {
-          console.log("Error CB");
-          console.log(error);
+          // console.log("Error CB");
+          // console.log(error);
           isLoading = false;
         });
       }
@@ -249,8 +249,8 @@ return {
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
-          console.log("Error CB");
-          console.log(error);
+          // console.log("Error CB");
+          // console.log(error);
           isLoading = false;
         });
       }
@@ -409,8 +409,8 @@ return {
         isLoading = false;
       }, 
       function(error){
-        console.log('Error CB');
-        console.log(error);
+        // console.log('Error CB');
+        // console.log(error);
         isLoading = false;
       });
     }
@@ -474,7 +474,7 @@ return {
             var episode = tvShowEpisodes.episodes[index];
             if(savedEpisodesMetaData && savedEpisodesMetaData[episode.episode_number]) {
               episode.air_date = new Date(episode.air_date).toDateString();
-              episode.isWatched = savedEpisodesMetaData[episode.episode_number].is_watched == 'Y';
+              episode.isWatched = savedEpisodesMetaData[episode.episode_number].isWatched == 'Y';
             }
           }
         }
@@ -490,8 +490,8 @@ return {
         isLoading = false;
       }, 
       function(error){
-        console.log('Error CB');
-        console.log(error);
+        // console.log('Error CB');
+        // console.log(error);
         isLoading = false;
       });
     }
@@ -516,7 +516,7 @@ return {
   init : function(showId,seasonNumber, episodeNumber, scope) {
     tvShowEpisodeDetail = {};
     var config = Configurations.getConfigurations();
-    console.log('in TVShowEpisodeDetail init()');
+    // console.log('in TVShowEpisodeDetail init()');
     if(!config) {
       Configurations.init(this.loadTVShowEpisodeDetailCallBack(showId, seasonNumber, episodeNumber, scope));
     } else {
@@ -546,7 +546,7 @@ return {
             } else {
               tvShowEpisodeDetail.still_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
-          //  // console.log(relativeImageURL);
+           // console.log(relativeImageURL);
         }
         if(tvShowEpisodeDetail.air_date) {
           var airedDate = new Date(tvShowEpisodeDetail.air_date);
@@ -559,11 +559,13 @@ return {
           tvShowEpisodeDetail.alertEnabled = savedEpisodeMetaData.alertEnabled == 'Y';
           tvShowEpisodeDetail.isFavourite = savedEpisodeMetaData.isFavourite == 'Y';
           tvShowEpisodeDetail.isWatched = savedEpisodeMetaData.isWatched == 'Y';
+          tvShowEpisodeDetail.isAlerted = savedEpisodeMetaData.isAlerted == 'Y';
+          tvShowEpisodeDetail.alertDate = savedEpisodeMetaData.alertDate;
         }
         if(scope) {  
           validScope = scope;
         }
-        console.log(tvShowEpisodeDetail); 
+        // console.log(tvShowEpisodeDetail); 
         if(validScope) {  
           validScope.tvShowEpisodeDetail = tvShowEpisodeDetail;
           validScope.hideSpinner();
@@ -571,8 +573,8 @@ return {
         isLoading = false;
       }, 
       function(error){
-        console.log('Error CB');
-        console.log(error);
+        // console.log('Error CB');
+        // console.log(error);
         isLoading = false;
       });
     }
@@ -604,7 +606,7 @@ return {
       }
       myGenreString += myGenres[index].id;
     }
-    console.log("myGenreString = " +myGenreString);
+    // console.log("myGenreString = " +myGenreString);
   } else {
     myGenreString ='10765|9648|18|35';
   }
@@ -701,8 +703,8 @@ return {
           },
           function(error) {
             isLoading = false;
-            console.log("Error CB");
-            console.log(error);
+            // console.log("Error CB");
+            // console.log(error);
           });
         }
       };

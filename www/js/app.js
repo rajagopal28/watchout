@@ -31,9 +31,9 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemoviegenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvgenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemovies (id integer primary key, movieid text, moviename text, is_favourite text, is_alerted text, alert_enabled text,"
-                              +" notificationid text, alertondate long, createdts long, lastmodifiedts long)");
+                              +" movie_genre_labels text, release_date text, poster_path text, notificationid text, alertondate long, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS favouritemoviesindex ON favouritemovies(movieid)");                    
-    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvshows (id integer primary key, showid text, showname text, is_favourite text, createdts long, lastmodifiedts long)");
+    $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvshows (id integer primary key, showid text, showname text, is_favourite text, show_genre_labels text,poster_path text, first_air_date text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS watchedepisodes (id integer primary key, showid text, seasonnumber text,episodenumber text, episodename text,"
                               +" is_watched text, is_favourite text, is_alerted text, alert_enabled text,"
                               +" notificationid integer, alertondate long, createdts long, lastmodifiedts long)");
@@ -98,12 +98,12 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
         }
       }      
     })
-    .state('app.movies.watched', {
-      url: '/watched',
+    .state('app.movies.favourite', {
+      url: '/favourite',
       views : {
-        'tab-watched-movie' : {
-          controller: 'MovieCtrl',
-          templateUrl: 'templates/tabs/tab-upcoming-movies.html'
+        'tab-favourite-movie' : {
+          controller: 'FavouriteMoviesCtrl',
+          templateUrl: 'templates/tabs/tab-favourite-movies.html'
         }
       }      
     })
@@ -143,12 +143,12 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
         }
       }      
     })
-    .state('app.tvshows.watched', {
-      url: '/watched',
+    .state('app.tvshows.favourite', {
+      url: '/favourite',
       views : {
-        'tab-watched-tvshow' : {
-          controller: 'TVShowCtrl',
-          templateUrl: 'templates/tabs/tab-upcoming-tvshows.html'
+        'tab-favourite-tvshow' : {
+          controller: 'FavouriteTVShowsCtrl',
+          templateUrl: 'templates/tabs/tab-favourite-tvshows.html'
         }
       }      
     })

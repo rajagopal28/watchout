@@ -1,6 +1,16 @@
 angular.module('watchout.tvshow-controllers', [])
 
 .controller('TVGenresCtrl', function($scope, $filter, $cordovaSQLite, $ionicLoading, TVGenres, TVShows){ // $cordovaSQLite, TVGenres) {
+  
+  $scope.setGenres = function(){
+    $scope.tvGenres =  TVGenres.all();
+    if($scope.tvGenres.length == 0) {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      TVGenres.init($scope);
+    }
+  };
   var genres = TVGenres.getFavouriteGenres();
   if(!genres || genres.length==0) {
     var query = "select genreid from favouritetvgenres";
@@ -17,31 +27,21 @@ angular.module('watchout.tvshow-controllers', [])
         TVShows.reset();
         // console.log('Calling controller save');
       } else {
-        console.log('No Rows...');
+        // console.log('No Rows...');
       }
       $scope.setGenres();
     });
   } else {
     $scope.setGenres();
-  }
-  $scope.setGenres = function(){
-    $scope.tvGenres =  TVGenres.all();
-    if($scope.tvGenres.length == 0) {
-      $ionicLoading.show({
-        template: 'Loading...'
-      });
-      TVGenres.init($scope);
-    }
-  };
-  
+  } 
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
-  }
+  };
   $scope.remove = function(tvGenre) {
     TVGenres.remove(tvGenre);
   }; 
    $scope.saveFavoriteGenre = function() {
-    console.log('Saving favourite genre');
+    // console.log('Saving favourite genre');
     var selectedGenres = $filter("filter")($scope.tvGenres, {checked: true});
     var query = "delete from favouritetvgenres";
     $cordovaSQLite.execute(db, query);
@@ -51,20 +51,20 @@ angular.module('watchout.tvshow-controllers', [])
      var genre = selectedGenres[index];
      var now = (new Date()).getTime();
       $cordovaSQLite.execute(db,query,[genre.id, genre.name, now, now]).then(function(results){
-        console.log("Genre : " + genre["id"] + " value =" + JSON.stringify(genre));
-        console.log("INSERT ID -> " + results.insertId);
+        // console.log("Genre : " + genre["id"] + " value =" + JSON.stringify(genre));
+        // console.log("INSERT ID -> " + results.insertId);
       }, function (err) {
-          console.error(err);
-          console.log('ERROR:'+ err.message);
+          // console.error(err);
+          // console.log('ERROR:'+ err.message);
       });
     }// end for
-    console.log(JSON.stringify(selectedGenres));
+    // console.log(JSON.stringify(selectedGenres));
  };
 })
 .controller('TVShowDetailCtrl',  function($scope,$stateParams,$cordovaSQLite,$ionicLoading, TVShows, TVShowSearch, TVShowDetail){
-  console.log("state show Id =" + $stateParams.showId);
+  // console.log("state show Id =" + $stateParams.showId);
   if(!$stateParams.showId) {
-    console.log('scope show id =' + $scope.showId);
+    // console.log('scope show id =' + $scope.showId);
     $stateParams.showId = $scope.showId;
   }
   $scope.tvShow = TVShows.get($stateParams.showId);
@@ -80,7 +80,7 @@ angular.module('watchout.tvshow-controllers', [])
         if(res.rows.length > 0) {
           TVShowDetail.setMetaData({is_favourite : res.rows.item(0).is_favourite});         
         } else {
-            console.log("No results found");
+            // console.log("No results found");
         }
 
         $ionicLoading.show({
@@ -88,17 +88,25 @@ angular.module('watchout.tvshow-controllers', [])
         });
         TVShowDetail.loadTvShowDetail($scope, $stateParams.showId); 
     }, function (err) {
-        console.error(err);
+        // console.error(err);
     });
     
   }// end if empty check - server call
   $scope.setFavourite = function() {
-    var query = "INSERT OR IGNORE INTO favouritetvshows (showid, showname, is_favourite, lastmodifiedts, createdts) VALUES (?,?,?,?,?)";
-    $cordovaSQLite.execute(db, query, [$scope.tvShow.id, $scope.tvShow.original_name, 'Y' , (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
-        console.log("INSERT ID -> " + res.insertId);
+    var poster_path = $scope.tvShow.poster_path;
+    if(!poster_path || poster_path.indexOf("nopicture") != -1){
+      poster_path = '';
+    } else {
+      poster_path = poster_path.substring(poster_path.lastIndexOf("/"));
+    }
+    var query = "INSERT OR IGNORE INTO favouritetvshows (showid, showname, is_favourite,"
+                +" show_genre_labels,poster_path, first_air_date, lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?)";
+    $cordovaSQLite.execute(db, query, [$scope.tvShow.id, $scope.tvShow.original_name, 'Y', 
+                              $scope.tvShow.show_genre_labels, poster_path, $scope.tvShow.first_air_date, (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
+        // console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
-        console.error(err);
-        console.log('ERROR:'+ err.message);
+        // console.error(err);
+        // console.log('ERROR:'+ err.message);
     });
     $scope.updateFlag('is_favourite', 'Y');
   };
@@ -110,10 +118,10 @@ angular.module('watchout.tvshow-controllers', [])
                       + flagName + " = ? , lastmodifiedts = ?"
                       + " WHERE showid = ? ";
     $cordovaSQLite.execute(db, query, [flagValueString , (new Date()).getTime(), $scope.tvShow.id]).then(function(res) {
-        console.log("INSERT ID -> " + res.insertId);
+        // console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
-        console.error(err);
-        console.log('ERROR:'+ err.message);
+        // console.error(err);
+        // console.log('ERROR:'+ err.message);
     });
     $scope.tvShow.isFavourite = flagValueString == 'Y';
   };
@@ -124,13 +132,13 @@ angular.module('watchout.tvshow-controllers', [])
 
 .controller('TVShowHomeCtrl',  function($scope,$stateParams,$cordovaSQLite){
   $scope.showId = $stateParams.showId;  
-  console.log($stateParams);
-  console.log('moving state params' + $scope.showId);
+  // console.log($stateParams);
+  // console.log('moving state params' + $scope.showId);
 })
 
 .controller('TVShowSeasonsCtrl',  function($scope, $stateParams,$cordovaSQLite,$ionicLoading,$ionicPopover, TVShowSeasons){
   $scope.tvShowSeasons = TVShowSeasons.get($stateParams.showId);
-  console.log($stateParams.showId);
+  // console.log($stateParams.showId);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
 
@@ -140,19 +148,19 @@ angular.module('watchout.tvshow-controllers', [])
   $cordovaSQLite.execute(db, query, [$scope.selected.showId]).then(function(res) {
       var allRecords = {};
       if(res.rows.length > 0) {
-        console.log($scope.tvShowSeasons);
+        // console.log($scope.tvShowSeasons);
         for(var index = 0 ; index < res.rows.length; index ++) {
           var selectedRecord = {};
           selectedRecord.watchedcount = res.rows.item(index).watchedcount;
           selectedRecord.seasonnumber =  res.rows.item(index).seasonnumber;
           allRecords[selectedRecord.seasonnumber] = selectedRecord;
-          console.log(JSON.stringify(allRecords));
+          // console.log(JSON.stringify(allRecords));
         }
 
         TVShowSeasons.setMetaData(allRecords);
                        
       } else {
-          console.log("No results found");
+          // console.log("No results found");
       }
       if(isObjectEmpty($scope.tvShowSeasons)){
         $ionicLoading.show({
@@ -161,7 +169,7 @@ angular.module('watchout.tvshow-controllers', [])
         TVShowSeasons.init($stateParams.showId, $scope);
       } 
   }, function (err) {
-      console.error(err);
+      // console.error(err);
   });
   
   $ionicPopover.fromTemplateUrl('templates/season-options-menu.html', {
@@ -177,31 +185,31 @@ angular.module('watchout.tvshow-controllers', [])
       $event.preventDefault();
       $event.stopPropagation();
     }
-    console.log('showing popup for season :' + showSeasonNumber);
+    // console.log('showing popup for season :' + showSeasonNumber);
   };
   $scope.closePopover = function() {
     $scope.popup.hide();
   };
   $scope.setAllWatched = function() {
-    console.log('setAllWatched');
-   console.log(JSON.stringify($scope.selected));
+    // console.log('setAllWatched');
+   // console.log(JSON.stringify($scope.selected));
     $scope.setFlagValue('is_watched', 'Y');    
     $scope.closePopover();
   };
   $scope.setAllUnWatched = function() {
-    console.log('setAllUnWatched');
-    console.log(JSON.stringify($scope.selected));   
+    // console.log('setAllUnWatched');
+    // console.log(JSON.stringify($scope.selected));   
     $scope.setFlagValue('is_watched', 'N');
     $scope.closePopover();
   };
   $scope.setAllIgnored = function() {
-    console.log('setAllIgnored');
-    console.log(JSON.stringify($scope.selected));    
+    // console.log('setAllIgnored');
+    // console.log(JSON.stringify($scope.selected));    
     $scope.setFlagValue('is_watched', 'I');
     $scope.closePopover();
   };
   $scope.setFlagValue = function(flagName, flagValueString) {
-    console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    // console.log('updating flag =' + flagName + ' with ' + flagValueString);
     // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
                   + flagName
@@ -210,7 +218,7 @@ angular.module('watchout.tvshow-controllers', [])
       var questionMarkString = "";
       if($scope.tvShowSeasons && $scope.tvShowSeasons.seasons && $scope.tvShowSeasons.seasons[$scope.selected.selectedSeasonIndex]) {
         var selectedSeason = $scope.tvShowSeasons.seasons[$scope.selected.selectedSeasonIndex];
-        console.log("in transaction episode_count-"+selectedSeason.episode_count);
+        // console.log("in transaction episode_count-"+selectedSeason.episode_count);
          for(var episode_number = 1; 
               episode_number <= parseInt(selectedSeason.episode_count); 
                 episode_number++) {
@@ -220,13 +228,13 @@ angular.module('watchout.tvshow-controllers', [])
             questionMarkString += "?";
             episodeNumberArray.push(episode_number);
             $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, episode_number, flagValueString, (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
-                console.log("INSERT ID -> " + res.insertId);
+                // console.log("INSERT ID -> " + res.insertId);
             }, function (err) {
-                console.error(err);
-                console.log('ERROR:'+ err.message);
+                // console.error(err);
+                // console.log('ERROR:'+ err.message);
             });
          }// end for
-         console.log("End for");
+         // console.log("End for");
          query = "UPDATE watchedepisodes SET "
                       + flagName + " = ? , lastmodifiedts = ?"
                       + " WHERE showid = ? and seasonnumber = ? and episodenumber in ("
@@ -236,10 +244,10 @@ angular.module('watchout.tvshow-controllers', [])
             allParams = allParams.concat(episodeNumberArray);
             $cordovaSQLite.execute(db, query, allParams)
                       .then(function(res) {
-                          console.log("INSERT ID -> " + res.insertId);
+                          // console.log("INSERT ID -> " + res.insertId);
                       }, function (err) {
-                          console.error(err);
-                          console.log('ERROR:'+ err.message);
+                          // console.error(err);
+                          // console.log('ERROR:'+ err.message);
                       });
         if('N'== flagValueString) {
           selectedSeason.watched_episodes_count = 0;
@@ -273,11 +281,11 @@ angular.module('watchout.tvshow-controllers', [])
     showName : ''
   };
   $scope.searchShows = function() {
-    console.log('Typing.. ' + $scope.selected.showName);
+    // console.log('Typing.. ' + $scope.selected.showName);
     var filtered = $filter("filter")(TVShows.all(), {name : $scope.selected.showName});
-    console.log(filtered);
+    // console.log(filtered);
     $scope.tvShows = filtered;
-  }
+  };
   $scope.fetchMoreTvShows = function() {
     var genres = TVGenres.getFavouriteGenres();
     if(!genres || genres.length==0) {
@@ -295,18 +303,24 @@ angular.module('watchout.tvshow-controllers', [])
             TVShows.reset();
             // console.log('Calling controller save');
           } else {
-            console.log('No Rows...');
-          }
+            // console.log('No Rows...');
+          }// end else
+          $ionicLoading.show({
+            template: 'Loading...'
+          });
+          // console.log('Fetching More TV Shows 1...');
+          TVShows.loadMore($scope);
         });
+    } else {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      // console.log('Fetching More TV Shows 2...');
+      TVShows.loadMore($scope);
     }// end if
     // $scope.apply();
-    // Movies.init();
-    $ionicLoading.show({
-      template: 'Loading...'
-    });
-    console.log('Fetching More TV Shows...');
-    TVShows.loadMore($scope);
-  }
+    
+  };
   $scope.$on('$stateChangeSuccess', function() {
     if(!$scope.tvShows || $scope.tvShows.length == 0) {
       $scope.fetchMoreTvShows();
@@ -322,20 +336,19 @@ angular.module('watchout.tvshow-controllers', [])
     showName : ''
   };
   $scope.searchShows = function() {
-    console.log('Typing.. ' + $scope.selected.showName);
+    // console.log('Typing.. ' + $scope.selected.showName);
     $ionicLoading.show({
       template: 'Loading...'
     });
-    console.log('Fetching More TV Shows...');
+    // console.log('Fetching More TV Shows...');
     TVShowSearch.loadMore($scope, $scope.selected.showName);
   }
   $scope.fetchMoreTvShows = function() {
     // $scope.apply();
-    // Movies.init();
     $ionicLoading.show({
       template: 'Loading...'
     });
-    console.log('Fetching More TV Shows...');
+    // console.log('Fetching More TV Shows...');
     TVShowSearch.loadMore($scope, $scope.selected.showName);
   }
   $scope.moreDataCanBeLoaded = function() {
@@ -353,7 +366,7 @@ angular.module('watchout.tvshow-controllers', [])
 
 .controller('TVShowEpisodesCtrl',  function($scope,$state, $stateParams,$cordovaSQLite,$ionicLoading,$ionicPopover, TVShowEpisodes, TVShowEpisodeDetail){
   $scope.tvShowEpisodes = TVShowEpisodes.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber);
-  console.log($stateParams.showId + " season : " + $stateParams.seasonNumber);
+  // console.log($stateParams.showId + " season : " + $stateParams.seasonNumber);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
@@ -362,13 +375,13 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.totalResults = 0;
 
   $scope.next = function() {
-    console.log($scope.tvShowEpisodes.episodes);
+    // console.log($scope.tvShowEpisodes.episodes);
     var indexValue = parseInt($scope.currentIndex) + 1;
-    console.log('Next : ' + $scope.currentIndex + " length =" + $scope.tvShowEpisodes.episodes.length);
+    // console.log('Next : ' + $scope.currentIndex + " length =" + $scope.tvShowEpisodes.episodes.length);
     if($scope.tvShowEpisodes && $scope.tvShowEpisodes.episodes && $scope.tvShowEpisodes.episodes.length > indexValue) {
       $scope.currentIndex = indexValue;
-      console.log('Next : ' + $scope.currentIndex );
-      console.log($scope.tvShowEpisodes.episodes[$scope.currentIndex]);
+      // console.log('Next : ' + $scope.currentIndex );
+      // console.log($scope.tvShowEpisodes.episodes[$scope.currentIndex]);
       var episodeNumber = $scope.tvShowEpisodes.episodes[$scope.currentIndex].episode_number;
       TVShowEpisodeDetail.init($scope.selected.showId, $scope.selected.seasonNumber, episodeNumber, null);
      }
@@ -400,23 +413,25 @@ angular.module('watchout.tvshow-controllers', [])
   }
   // Fetch the watched episodes status for this show and season
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
-  var query = "SELECT episodenumber, is_watched,is_favourite FROM watchedepisodes WHERE showid = ? and seasonnumber = ?";
+  var query = "SELECT episodenumber, is_watched,is_favourite,is_alerted,alert_enabled FROM watchedepisodes WHERE showid = ? and seasonnumber = ?";
   $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber]).then(function(res) {
       var allRecords = {};
       if(res.rows.length > 0) {
-          console.log($scope.tvShowSeasons);
+          // console.log($scope.tvShowSeasons);
           for(var index = 0 ; index < res.rows.length; index ++) {
             var selectedRecord = {};
-            selectedRecord.is_watched = res.rows.item(index).is_watched;
+            selectedRecord.isWatched = res.rows.item(index).is_watched;
             selectedRecord.episodenumber =  res.rows.item(index).episodenumber;
-            selectedRecord.is_favourite = res.rows.item(index).is_favourite;
+            selectedRecord.isFavourite = res.rows.item(index).is_favourite;
+            selectedRecord.isAlerted = res.rows.item(index).is_alerted;
+            selectedRecord.alertEnabled = res.rows.item(index).alert_enabled;
             allRecords[selectedRecord.episodenumber] = selectedRecord;
           }
           TVShowEpisodes.setMetaData(allRecords);              
       } else {
-          console.log("No results found");
+          // console.log("No results found");
       }
-      console.log($stateParams);
+      // console.log($stateParams);
       if(isObjectEmpty($scope.tvShowEpisodes)){
         $ionicLoading.show({
           template: 'Loading...'
@@ -424,7 +439,7 @@ angular.module('watchout.tvshow-controllers', [])
         TVShowEpisodes.init($stateParams.showId,$stateParams.seasonNumber,$stateParams.episodeNumber, $scope);
       }  
   }, function (err) {
-      console.error(err);
+      // console.error(err);
   });
 
   $ionicPopover.fromTemplateUrl('templates/episode-options-menu.html', {
@@ -440,23 +455,23 @@ angular.module('watchout.tvshow-controllers', [])
       $event.preventDefault();
       $event.stopPropagation();
     }
-    console.log('showing popup for season :' + showEpisodeNumber);
+    // console.log('showing popup for season :' + showEpisodeNumber);
   };
   $scope.setAllWatched = function() {
-    console.log('setAllWatched');
-   console.log(JSON.stringify($scope.selected));
+    // console.log('setAllWatched');
+   // console.log(JSON.stringify($scope.selected));
     $scope.setFlagValue('is_watched', 'Y',false);    
     $scope.closePopover();
   };
   $scope.setAllUnWatched = function() {
-    console.log('setAllUnWatched');
-    console.log(JSON.stringify($scope.selected));   
+    // console.log('setAllUnWatched');
+    // console.log(JSON.stringify($scope.selected));   
     $scope.setFlagValue('is_watched', 'N', false);
     $scope.closePopover();
   };
   $scope.setAllIgnored = function() {
-    console.log('setAllIgnored');
-    console.log(JSON.stringify($scope.selected));    
+    // console.log('setAllIgnored');
+    // console.log(JSON.stringify($scope.selected));    
     $scope.setFlagValue('is_watched', 'I', false);
     $scope.closePopover();
   };
@@ -468,25 +483,25 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.popup.hide();
   };
   $scope.setWatched = function() {
-    console.log('setAllWatched');
-    console.log(JSON.stringify($scope.selected));
+    // console.log('setAllWatched');
+    // console.log(JSON.stringify($scope.selected));
     $scope.setFlagValue('is_watched', 'Y', true);
     $scope.closePopover();
   };
   $scope.setUnWatched = function() {
-    console.log('setAllUnWatched');
+    // console.log('setAllUnWatched');
     $scope.setFlagValue('is_watched', 'N', true);
-    console.log(JSON.stringify($scope.selected));
+    // console.log(JSON.stringify($scope.selected));
     $scope.closePopover();
   };
   $scope.setIgnored = function() {
-    console.log('setAllIgnored');
-    console.log(JSON.stringify($scope.selected));
+    // console.log('setAllIgnored');
+    // console.log(JSON.stringify($scope.selected));
     $scope.setFlagValue('is_watched', 'I', true);
     $scope.closePopover();
   };
   $scope.setFlagValue = function(flagName, flagValueString, episodeSelected) {
-    console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    // console.log('updating flag =' + flagName + ' with ' + flagValueString);
     // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
                   + flagName
@@ -507,10 +522,10 @@ angular.module('watchout.tvshow-controllers', [])
             questionMarkString += "?";
             episodeNumberArray.push(episode_number);
             $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, episode_number, flagValueString, (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
-                console.log("INSERT ID -> " + res.insertId);
+                // console.log("INSERT ID -> " + res.insertId);
             }, function (err) {
-                console.error(err);
-                console.log('ERROR:'+ err.message);
+                // console.error(err);
+                // console.log('ERROR:'+ err.message);
             });
          }// end for
         } else {
@@ -519,10 +534,10 @@ angular.module('watchout.tvshow-controllers', [])
             $scope.tvShowEpisodes.episodes[index].isWatched = flagValueString != 'N';
             episodeNumberArray.push($scope.selected.episodeNumber);
             $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber, flagValueString, (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
-                console.log("INSERT ID -> " + res.insertId);
+                // console.log("INSERT ID -> " + res.insertId);
             }, function (err) {
-                console.error(err);
-                console.log('ERROR:'+ err.message);
+                // console.error(err);
+                // console.log('ERROR:'+ err.message);
             });
         }
        query = "UPDATE watchedepisodes SET "
@@ -534,10 +549,10 @@ angular.module('watchout.tvshow-controllers', [])
         allParams = allParams.concat(episodeNumberArray);
         $cordovaSQLite.execute(db, query, allParams)
                   .then(function(res) {
-                      console.log("INSERT ID -> " + res.insertId);
+                      // console.log("INSERT ID -> " + res.insertId);
                   }, function (err) {
-                      console.error(err);
-                      console.log('ERROR:'+ err.message);
+                      // console.error(err);
+                      // console.log('ERROR:'+ err.message);
                   });
       }      
   };
@@ -560,12 +575,12 @@ angular.module('watchout.tvshow-controllers', [])
 
 .controller('TVShowEpisodeDetailCtrl',  function($scope, $window,$stateParams,$cordovaSQLite,$ionicLoading, TVShowEpisodeDetail){
   $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber, $scope);
-  console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
+  // console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
-  console.log('Loading TVShowEpisodeDetailCtrl');
+  // console.log('Loading TVShowEpisodeDetailCtrl');
 
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
   var query = "SELECT id, is_watched, is_favourite, is_alerted, alertondate FROM watchedepisodes WHERE showid = ? and seasonnumber = ? and episodenumber = ?";
@@ -573,18 +588,18 @@ angular.module('watchout.tvshow-controllers', [])
       var selectedRecord = {};
       if(res.rows.length > 0) {
           
-          console.log($scope.tvShowEpisodeDetail);
+          // console.log($scope.tvShowEpisodeDetail);
           selectedRecord.isWatched = res.rows.item(0).is_watched;
           selectedRecord.isFavourite =  res.rows.item(0).is_favourite;
           selectedRecord.isAlerted =  res.rows.item(0).is_alerted;
           selectedRecord.alertEnabled = res.rows.item(0).alert_enabled;
-          selectedRecord.alertDate = new Date(res.rows.item(0).alertondate);
-          console.log($scope.tvShowEpisodeDetail);
+          selectedRecord.alertDate = new Date(res.rows.item(0).alertondate).toDateString();
+          // console.log($scope.tvShowEpisodeDetail);
           selectedRecord.id = res.rows.item(0).id;
           TVShowEpisodeDetail.setMetaData(selectedRecord);
           
       } else {
-          console.log("No results found");
+          // console.log("No results found");
       }
       if(isObjectEmpty($scope.tvShowEpisodeDetail)){
         $ionicLoading.show({
@@ -593,25 +608,25 @@ angular.module('watchout.tvshow-controllers', [])
         TVShowEpisodeDetail.init($stateParams.showId,$stateParams.seasonNumber,$stateParams.episodeNumber, $scope);
       }
   }, function (err) {
-      console.error(err);
+      // console.error(err);
   });
   
   $scope.setWatched = function(statusFlag) {
-    console.log('setWatchedStatus statusFlag='+statusFlag);
+    // console.log('setWatchedStatus statusFlag='+statusFlag);
     $scope.tvShowEpisodeDetail.isWatched = statusFlag;
-    console.log($scope.selected);
+    // console.log($scope.selected);
     $scope.updateFlag('is_watched', statusFlag);
   };
   $scope.favouriteShow = function(statusFlag) {
-    console.log('favouriteShow statusFlag='+statusFlag);
+    // console.log('favouriteShow statusFlag='+statusFlag);
     $scope.tvShowEpisodeDetail.isFavourite = statusFlag;
-    console.log($scope.selected);
+    // console.log($scope.selected);
     $scope.updateFlag('is_favourite', statusFlag);
   };
   $scope.alertShow = function(statusFlag) {
-    console.log('alertShow statusFlag='+statusFlag);
+    // console.log('alertShow statusFlag='+statusFlag);
     $scope.tvShowEpisodeDetail.alertEnabled = statusFlag;
-    console.log($scope.selected);
+    // console.log($scope.selected);
     $scope.updateFlag('alert_enabled', statusFlag);
     
     if(statusFlag) {
@@ -626,12 +641,12 @@ angular.module('watchout.tvshow-controllers', [])
                     lastnotificationid = parseInt(res.rows.item(0).lastnotificationid);
                   }                  
               } else {
-                  console.log("No results found");
+                  // console.log("No results found");
               }
-              console.log("lastnotificationid = " + lastnotificationid);
+              // console.log("lastnotificationid = " + lastnotificationid);
               $scope.addNotification(lastnotificationid + 1);
           }, function (err) {
-              console.error(err);
+              // console.error(err);
           });
     } else {
       // remove the scheduled notification by fetching the id from DB UPDATE
@@ -640,14 +655,14 @@ angular.module('watchout.tvshow-controllers', [])
           $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber]).then(function(res) {
               var notificationid = 1;
               if(res.rows.length > 0) {                
-                  console.log($scope.tvShowEpisodeDetail);
+                  // console.log($scope.tvShowEpisodeDetail);
                   notificationid = parseInt(res.rows.item(0).notificationid);
                   cancelNotification({'id' : notificationid},window,$scope)
               } else {
-                  console.log("No results found");
+                  // console.log("No results found");
               }
           }, function (err) {
-              console.error(err);
+              // console.error(err);
           });
     }
   };
@@ -673,9 +688,9 @@ angular.module('watchout.tvshow-controllers', [])
                   +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?,?)";
       $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber,
                                            'Y',alertTime,'N', notificationId, (new Date()).getTime(), (new Date()).getTime()]).then(function(res) {
-         console.log("INSERT ID -> " + res.insertId);
+         // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
       // If already present update
       query = "UPDATE watchedepisodes SET "
@@ -685,9 +700,9 @@ angular.module('watchout.tvshow-controllers', [])
       $cordovaSQLite.execute(db, query, ['Y',alertTime,'N', notificationId, (new Date()).getTime(),
                                 $scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber])
       .then(function(res) {
-          console.log("INSERT ID -> " + res.insertId);
+          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
   }
 
@@ -696,9 +711,9 @@ angular.module('watchout.tvshow-controllers', [])
   };
   $scope.updateFlag = function(flagName, flagValue) {
     var flagValueString = flagValue ? 'Y' : 'N';
-    console.log(JSON.stringify($scope.selected));
+    // console.log(JSON.stringify($scope.selected));
     $scope.selected.episodeNumber = $scope.tvShowEpisodeDetail.episode_number;
-    console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    // console.log('updating flag =' + flagName + ' with ' + flagValueString);
     // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
                   + flagName
@@ -706,9 +721,9 @@ angular.module('watchout.tvshow-controllers', [])
       $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber,
                                $scope.selected.episodeNumber, flagValueString, (new Date()).getTime(), (new Date()).getTime()])
       .then(function(res) {
-          console.log("INSERT ID -> " + res.insertId);
+          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
       // If already present update
       query = "UPDATE watchedepisodes SET "
@@ -718,9 +733,77 @@ angular.module('watchout.tvshow-controllers', [])
       $cordovaSQLite.execute(db, query, [flagValueString, (new Date()).getTime(), $scope.selected.showId, $scope.selected.seasonNumber,
                                $scope.selected.episodeNumber])
       .then(function(res) {
-          console.log("INSERT ID -> " + res.insertId);
+          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
+  };
+})
+
+.controller('FavouriteTVShowsCtrl',  function($scope,$stateParams,$filter,$cordovaSQLite, $ionicLoading, Configurations, TVGenres){
+  // TVShows.init($scope);
+  $scope.tvShows = [];
+  $scope.favouriteTVShows = [];
+  TVGenres.init();
+
+  $scope.selected = {
+    tvShowName : ''
+  };
+  $scope.fetchTVShows = function() {
+    return function() {
+      // fetch favourite tvShows from database
+     var query = "SELECT showid, showname, first_air_date,show_genre_labels, poster_path FROM favouritetvshows where is_favourite = 'Y'";
+      $cordovaSQLite.execute(db, query, []).then(function(res) {
+          if(res.rows.length > 0) { 
+              $scope.favouriteTVShows = [];
+              $scope.tvShows=[];               
+              for(var index=0; index < res.rows.length; index++ ) {
+                var newTVShow = {};
+                newTVShow.id = res.rows.item(index).showid;
+                newTVShow.original_name = res.rows.item(index).showname;
+                newTVShow.first_air_date = res.rows.item(index).first_air_date;
+                var poster_path = res.rows.item(index).poster_path;
+                if(poster_path && poster_path != '') {
+                  console.log(poster_path);
+                  if(poster_path.indexOf(config.images.base_url) != 0) {
+                    poster_path = config.images.base_url  
+                                        + config.images.poster_sizes[0]
+                                        + poster_path;
+                    newTVShow.poster_path = poster_path;
+                    console.log(poster_path);
+                  }
+                } else {
+                    newTVShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+                }
+                newTVShow.show_genre_labels = res.rows.item(index).show_genre_labels;
+                $scope.favouriteTVShows.push(newTVShow);
+              }
+              $scope.tvShows = $scope.favouriteTVShows.slice();
+          } else {
+              // console.log("No results found");
+          }
+          $scope.hideSpinner();
+      }, function (err) {
+          // console.error(err);
+      });
+    };
+  };
+  var config = Configurations.getConfigurations();
+  $ionicLoading.show({
+        template: 'Loading...'
+      });
+  if(!config || isObjectEmpty(config)) {
+    Configurations.init($scope.fetchTVShows());
+  } else {
+    $scope.fetchTVShows()();
+  }
+  
+  
+  $scope.searchShows = function() {
+    // console.log('Typing.. ' + $scope.selected.tvShowName);
+    $scope.tvShows = $filter("filter")($scope.favouriteTVShows, {title : $scope.selected.tvShowName});
+  }
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
   };
 });

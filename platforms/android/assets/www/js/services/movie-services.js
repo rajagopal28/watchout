@@ -20,8 +20,8 @@ angular.module('watchout.movie-services', [])
             }
           }, 
           function(error){
-            console.log('Error CB');
-            console.log(error);
+            // console.log('Error CB');
+            // console.log(error);
           });
     }
    }
@@ -31,7 +31,7 @@ angular.module('watchout.movie-services', [])
         for (var j=0; j< selectedMovieGenres.length; j++) {
           if(movieGenres[i].id == selectedMovieGenres[j].id) {
             movieGenres[i].checked = true;
-            console.log(movieGenres[i]);
+            // console.log(movieGenres[i]);
           }
       }
     }
@@ -71,7 +71,7 @@ angular.module('watchout.movie-services', [])
       }
       myGenreString += myGenres[index].id;
     }
-    console.log("myGenreString = " +myGenreString);
+    // console.log("myGenreString = " +myGenreString);
   } else {
     myGenreString ='10765|9648|18|35';
   }
@@ -96,12 +96,16 @@ return {
       // this.loadMovies(scope, currentPage);
         
     },
+    reset : function(){
+      movies = [];
+      this.init();
+    },
     loadMoviesCallBack : function(scope, pagetoLoad) {
       return function() {
         var config = Configurations.getConfigurations();
         if(!isLoading) {
         isLoading = true;
-        console.log(isLoading);
+        // console.log(isLoading);
         theMovieDb.discover.getMovies(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
@@ -163,8 +167,8 @@ return {
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
-          console.log("Error CB");
-          console.log(error);
+          // console.log("Error CB");
+          // console.log(error);
           isLoading = false;
         });
       }
@@ -174,11 +178,11 @@ return {
       discoverWithAttributes.page = pagetoLoad + 1;
       // console.log('in loadMovies');
       var config = Configurations.getConfigurations();
-      console.log(config);
+      // console.log(config);
       if(!config) {
         Configurations.init(this.loadMoviesCallBack(scope, pagetoLoad));
       } else {
-        console.log('in else');
+        // console.log('in else');
         this.loadMoviesCallBack(scope, pagetoLoad)();
         // call the function returned by the call back function
       }
@@ -230,17 +234,15 @@ return {
         if(genres.length == 0) {
           MovieGenres.init();// init without scope to use genres later
         }
-      }
-       
-      // this.loadMovies(scope, currentPage);
-        
+      }       
+      // this.loadMovies(scope, currentPage);        
     },
     loadMoviesCallBack : function(scope, pagetoLoad) {
       return function() {
         var config = Configurations.getConfigurations();
         if(!isLoading) {
         isLoading = true;
-        console.log(isLoading);
+        // console.log(isLoading);
         theMovieDb.search.getMovie(discoverWithAttributes,
         function(data) {
           // console.log(typeof data)
@@ -305,8 +307,8 @@ return {
           scope.$broadcast('scroll.infiniteScrollComplete');
         },
         function(error) {
-          console.log("Error CB");
-          console.log(error);
+          // console.log("Error CB");
+          // console.log(error);
           isLoading = false;
         });
       }
@@ -323,11 +325,11 @@ return {
 
       // console.log('in loadMovies');
       var config = Configurations.getConfigurations();
-      console.log(config);
+      // console.log(config);
       if(!config) {
         Configurations.init(this.loadMoviesCallBack(scope, pagetoLoad));
       } else {
-        console.log('in else');
+        // console.log('in else');
         this.loadMoviesCallBack(scope, pagetoLoad)();
         // call the function returned by the call back function
       }
@@ -382,7 +384,7 @@ return {
         var config = Configurations.getConfigurations();
         if(!isLoading) {
         isLoading = true;
-        console.log(isLoading);
+        // console.log(isLoading);
         theMovieDb.movies.getById({id: movieId },
         function(data) {
           // console.log(typeof data)
@@ -419,7 +421,7 @@ return {
             newMovie.isFavourite = savedMovieMetaData.isFavourite == 'Y';
             newMovie.isAlerted = savedMovieMetaData.isAlerted == 'Y';
             newMovie.alertEnabled = savedMovieMetaData.alertEnabled == 'Y';
-            newMovie.alertDate = savedMovieMetaData.alertDate.toDateString();
+            newMovie.alertDate = savedMovieMetaData.alertDate;
           }
           // add genre names
           var genres = newMovie.genres;
@@ -440,8 +442,8 @@ return {
           isLoading = false;
         },
         function(error) {
-          console.log("Error CB");
-          console.log(error);
+          // console.log("Error CB");
+          // console.log(error);
           isLoading = false;
         });
       }
@@ -450,11 +452,11 @@ return {
     loadMovieDetail : function(scope, movieId) {
       // console.log('in loadMovies');
       var config = Configurations.getConfigurations();
-      console.log(config);
+      // console.log(config);
       if(!config) {
         Configurations.init(this.loadMovieDetailCallBack(scope, movieId));
       } else {
-        console.log('in else');
+        // console.log('in else');
         this.loadMovieDetailCallBack(scope, movieId)();
         // call the function returned by the call back function
       }

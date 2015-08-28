@@ -1,6 +1,17 @@
 angular.module('watchout.movie-controllers', [])
 .controller('MovieGenresCtrl', function($scope, $filter, $ionicLoading, $cordovaSQLite, MovieGenres) {
-  var genres = MovieGenres.getFavouriteGenres();
+ 
+  $scope.setGenres = function() {
+    $scope.movieGenres =  MovieGenres.all();
+      if($scope.movieGenres.length == 0) {
+        // console.log('Calling in MovieGenres');
+        $ionicLoading.show({
+          template: 'Loading...'
+        });
+        MovieGenres.init($scope);
+      }
+  };
+   var genres = MovieGenres.getFavouriteGenres();
   if(!genres || genres.length==0) {
     var query = "select genreid from favouritemoviegenres";
     $cordovaSQLite.execute(db,query,[]).then(function(results){
@@ -10,28 +21,18 @@ angular.module('watchout.movie-controllers', [])
           var genreItem = {};
           genreItem.id = results.rows.item(i).genreid;
           selectedGenres.push(genreItem);
-          console.log('Fetched genre : ' + genreItem.id);
+          // console.log('Fetched genre : ' + genreItem.id);
         }
-        console.log('Calling controller save');
+        // console.log('Calling controller save');
         MovieGenres.saveFavoriteGenres(selectedGenres);
       } else {
-        console.log('No Rows...');
+        // console.log('No Rows...');
       }
       $scope.setGenres();
     });
   } else {
     $scope.setGenres();
   }
-  $scope.setGenres = function() {
-    $scope.movieGenres =  MovieGenres.all();
-      if($scope.movieGenres.length == 0) {
-        console.log('Calling in MovieGenres');
-        $ionicLoading.show({
-          template: 'Loading...'
-        });
-        MovieGenres.init($scope);
-      }
-  };
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
   }
@@ -39,7 +40,7 @@ angular.module('watchout.movie-controllers', [])
     MovieGenres.remove(movieGenre);
   };
    $scope.saveFavoriteGenre = function() {
-  console.log('Saving favourite genre');
+  // console.log('Saving favourite genre');
     var selectedGenres = $filter("filter")($scope.movieGenres, {checked: true});
     var query = "delete from favouritemoviegenres";
     $cordovaSQLite.execute(db, query);
@@ -49,27 +50,27 @@ angular.module('watchout.movie-controllers', [])
      var genre = selectedGenres[index];
      var now = (new Date()).getTime();
       $cordovaSQLite.execute(db,query,[genre.id, genre.name, now, now]).then(function(results){
-        console.log("Genre : " + genre["id"] + " value =" + JSON.stringify(genre));
-        console.log("INSERT ID -> " + results.insertId);
+        // console.log("Genre : " + genre["id"] + " value =" + JSON.stringify(genre));
+        // console.log("INSERT ID -> " + results.insertId);
       }, function (err) {
-          console.error(err);
-          console.log('ERROR:'+ err.message);
+          // console.error(err);
+          // console.log('ERROR:'+ err.message);
       });
     }// end for
-    console.log(selectedGenres);
+    // console.log(selectedGenres);
  };
 })
 
-.controller('MovieCtrl',  function($scope,$stateParams,$filter, $ionicLoading, Movies){
+.controller('MovieCtrl',  function($scope,$stateParams,$filter, $cordovaSQLite, $ionicLoading, Movies, MovieGenres){
   // Movies.init($scope);
   $scope.movies = Movies.all();
   $scope.selected = {
     movieName : ''
   };
   $scope.searchMovies = function() {
-    console.log('Typing.. ' + $scope.selected.movieName);
+    // console.log('Typing.. ' + $scope.selected.movieName);
     var filtered = $filter("filter")(Movies.all(), {title : $scope.selected.movieName});
-    console.log(filtered);
+    // console.log(filtered);
     $scope.movies = filtered;
   }
   $scope.remove = function(movie) {
@@ -79,13 +80,40 @@ angular.module('watchout.movie-controllers', [])
     $ionicLoading.hide();
   };
   $scope.fetchMoreMovies = function() {
+    var genres = MovieGenres.getFavouriteGenres();
+    if(!genres || genres.length==0) {
+       var query = "select genreid from favouritemoviegenres";
+        $cordovaSQLite.execute(db,query,[]).then(function(results){
+          var selectedGenres = [];
+          if(results.rows.length > 0) {
+            for (var i = 0; i < results.rows.length; i++) {
+              var genreItem = {};
+              genreItem.id = results.rows.item(i).genreid;
+              selectedGenres.push(genreItem);
+              // console.log('Fetched genre : ' + genreItem.id);
+            }
+            MovieGenres.saveFavoriteGenres(selectedGenres);
+            Movies.reset();
+            // console.log('Calling controller save');
+          } else {
+            // console.log('No Rows...');
+          }// end else
+          $ionicLoading.show({
+            template: 'Loading...'
+          });
+          // console.log('Fetching More Movies 1...');
+          Movies.loadMore($scope);
+        });
+    } else {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      // console.log('Fetching More Movies 2...');
+      Movies.loadMore($scope);
+    }// end if
     // $scope.apply();
     // Movies.init();
-    $ionicLoading.show({
-      template: 'Loading...'
-    });
-    console.log('Fetching More Movies...');
-    Movies.loadMore($scope);
+    
   }
   $scope.$on('$stateChangeSuccess', function() {
     if(!$scope.movies || $scope.movies.length == 0) {
@@ -104,12 +132,13 @@ angular.module('watchout.movie-controllers', [])
           selectedRecord.isFavourite =  res.rows.item(0).is_favourite;
           selectedRecord.isAlerted =  res.rows.item(0).is_alerted;
           selectedRecord.alertEnabled = res.rows.item(0).alert_enabled;
-          selectedRecord.alertDate = new Date(res.rows.item(0).alertondate);
+          selectedRecord.alertDate = new Date(res.rows.item(0).alertondate).toDateString();
           selectedRecord.id = res.rows.item(0).id;
+          // console.log("selectedRecord=" + JSON.stringify(selectedRecord));
           MovieDetail.setMetaData(selectedRecord);
           
       } else {
-          console.log("No results found");
+          // console.log("No results found");
       }
       $scope.movie = Movies.get($stateParams.movieId);
       if(!$scope.movie || isObjectEmpty($scope.movie)) {
@@ -122,32 +151,42 @@ angular.module('watchout.movie-controllers', [])
           });
         MovieDetail.loadMovieDetail($scope, $stateParams.movieId);
       } else {
+        $scope.movie.isReleased = new Date($scope.movie.release_date).getTime() - new Date().getTime() < 0;
         $scope.movie.isFavourite = selectedRecord.isFavourite == 'Y';
         $scope.movie.isAlerted = selectedRecord.isAlerted == 'Y';
         $scope.movie.alertEnabled = selectedRecord.alertEnabled == 'Y';
-        $scope.movie.alertDate = selectedRecord.alertDate.toDateString();
+        $scope.movie.alertDate = selectedRecord.alertDate;
       }
   }, function (err) {
-      console.error(err);
+      // console.error(err);
   });
   $scope.setFavourite = function() {
-    var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename, is_favourite, lastmodifiedts, createdts) VALUES (?,?,?,?,?)";
-    $cordovaSQLite.execute(db, query, [$scope.movie.id, $scope.movie.original_title, 'Y' , (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
-        console.log("INSERT ID -> " + res.insertId);
+    var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename, is_favourite,"
+              + " movie_genre_labels,release_date, poster_path, lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?)";
+    var poster_path = $scope.movie.poster_path;
+    if(!poster_path || poster_path.indexOf("nopicture") != -1){
+      poster_path = '';
+    } else {
+      poster_path = poster_path.substring(poster_path.lastIndexOf("/"));
+    }
+    $cordovaSQLite.execute(db, query, [$scope.movie.id, $scope.movie.original_title, 'Y', $scope.movie.movie_genre_labels,$scope.movie.release_date,poster_path , (new Date()).getTime(),(new Date()).getTime()]).then(function(res) {
+        // console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
-        console.error(err);
-        console.log('ERROR:'+ err.message);
+        // console.error(err);
+        // console.log('ERROR:'+ err.message);
     });
     $scope.updateFlag('is_favourite', 'Y');
+    $scope.movie.isFavourite = true;
   };
   $scope.removeFavourite = function() {
     $scope.updateFlag('is_favourite', 'N');
+    $scope.movie.isFavourite = false;
   };
   $scope.alertMovie = function(statusFlag) {
-    console.log('alertMovie statusFlag='+statusFlag);
+    // console.log('alertMovie statusFlag='+statusFlag);
     $scope.movie.alertEnabled = statusFlag;
-    console.log($scope.selected);
-    $scope.updateFlag('alert_enabled', statusFlag);
+    // console.log($scope.selected);
+    $scope.updateFlag('alert_enabled', statusFlag ? 'Y' : 'N');
     
     if(statusFlag) {
       // add a scheduled notification by inserting to DB INSERT
@@ -161,12 +200,12 @@ angular.module('watchout.movie-controllers', [])
                     lastnotificationid = parseInt(res.rows.item(0).lastnotificationid);
                   }                  
               } else {
-                  console.log("No results found");
+                  // console.log("No results found");
               }
-              console.log("lastnotificationid = " + lastnotificationid);
+              // console.log("lastnotificationid = " + lastnotificationid);
               $scope.addNotification(lastnotificationid + 1);
           }, function (err) {
-              console.error(err);
+              // console.error(err);
           });
     } else {
       // remove the scheduled notification by fetching the id from DB UPDATE
@@ -175,14 +214,16 @@ angular.module('watchout.movie-controllers', [])
           $cordovaSQLite.execute(db, query, [$scope.movie.id]).then(function(res) {
               var notificationid = 1;
               if(res.rows.length > 0) {                
-                  console.log($scope.movie);
-                  notificationid = parseInt(res.rows.item(0).notificationid);
-                  cancelNotification({'id' : notificationid},window,$scope)
+                  // console.log($scope.movie);                  
+                  if(res.rows.item(0).notificationid) {
+                    notificationid = parseInt(res.rows.item(0).notificationid);
+                  }
+                  cancelNotification({'id' : notificationid},window,$scope);
               } else {
-                  console.log("No results found");
+                  // console.log("No results found");
               }
           }, function (err) {
-              console.error(err);
+              // console.error(err);
           });
     }
   };
@@ -192,7 +233,7 @@ angular.module('watchout.movie-controllers', [])
     var notificationMessage = "The movie *"
                               + $scope.movie.original_title
                               + "* is about to be aired "
-                              + $scope.movie.relase_date;
+                              + $scope.movie.release_date;
     var title = "Watchout a new movie";
     var notificationData = {};
     notificationData['alertondate'] = alertTime;
@@ -206,9 +247,9 @@ angular.module('watchout.movie-controllers', [])
                   +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?)";
       $cordovaSQLite.execute(db, query, [$scope.movie.id,
                                            'Y',alertTime,'N', notificationId, (new Date()).getTime(), (new Date()).getTime()]).then(function(res) {
-         console.log("INSERT ID -> " + res.insertId);
+         // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
       // If already present update
       query = "UPDATE favouritemovies SET "
@@ -218,22 +259,22 @@ angular.module('watchout.movie-controllers', [])
       $cordovaSQLite.execute(db, query, ['Y',alertTime,'N', notificationId, (new Date()).getTime(),
                                 $scope.movie.id])
       .then(function(res) {
-          console.log("INSERT ID -> " + res.insertId);
+          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
-          console.error(err);
+          // console.error(err);
       });
+      $scope.movie.alertEnabled = true;
   }
   $scope.updateFlag = function(flagName, flagValueString) {
     query = "UPDATE favouritemovies SET "
                       + flagName + " = ? , lastmodifiedts = ?"
                       + " WHERE movieid = ? ";
     $cordovaSQLite.execute(db, query, [flagValueString , (new Date()).getTime(), $scope.movie.id]).then(function(res) {
-        console.log("INSERT ID -> " + res.insertId);
+        // console.log("INSERT ID -> " + res.insertId);
     }, function (err) {
-        console.error(err);
-        console.log('ERROR:'+ err.message);
+        // console.error(err);
+        // console.log('ERROR:'+ err.message);
     });
-    $scope.movie.isFavourite = flagValueString == 'Y';
   };
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
@@ -248,7 +289,7 @@ angular.module('watchout.movie-controllers', [])
     movieName : ''
   };
   $scope.searchMovies = function() {
-    console.log('Typing.. ' + $scope.selected.movieName);
+    // console.log('Typing.. ' + $scope.selected.movieName);
     $scope.fetchMoreMovies();
   }
   $scope.remove = function(movie) {
@@ -264,7 +305,7 @@ angular.module('watchout.movie-controllers', [])
       $ionicLoading.show({
         template: 'Loading...'
       });
-      console.log('Fetching More Movies...');
+      // console.log('Fetching More Movies...');
       MovieSearch.loadMore($scope, $scope.selected.movieName);
     }
   }
@@ -279,4 +320,74 @@ angular.module('watchout.movie-controllers', [])
       $scope.fetchMoreMovies();
     }
   });
+})
+
+
+.controller('FavouriteMoviesCtrl',  function($scope,$stateParams,$filter,$cordovaSQLite, $ionicLoading, Configurations, MovieGenres){
+  // Movies.init($scope);
+  $scope.movies = [];
+  $scope.favouriteMovies = [];
+  MovieGenres.init();
+
+  $scope.selected = {
+    movieName : ''
+  };
+  $scope.fetchMovies = function() {
+    return function() {
+      // fetch favourite movies from database
+     var query = "SELECT movieid, moviename, release_date,movie_genre_labels, poster_path FROM favouritemovies where is_favourite = 'Y'";
+      $cordovaSQLite.execute(db, query, []).then(function(res) {
+          if(res.rows.length > 0) { 
+              $scope.favouriteMovies = [];
+              $scope.movies=[];             
+              var config = Configurations.getConfigurations();  
+              for(var index=0; index < res.rows.length; index++ ) {
+                var newMovie = {};
+                newMovie.id = res.rows.item(index).movieid;
+                newMovie.original_title = res.rows.item(index).moviename;
+                newMovie.title = newMovie.original_title;
+                newMovie.release_date = res.rows.item(index).release_date;
+                var poster_path = res.rows.item(index).poster_path;
+                if(poster_path && poster_path != '') {
+                  if(poster_path.indexOf(config.images.base_url) != 0) {
+                    poster_path = config.images.base_url  
+                                        + config.images.poster_sizes[0]
+                                        + poster_path;
+                    newMovie.poster_path = poster_path;
+                    console.log(poster_path);
+                  }
+                } else {
+                    newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+                }
+                
+                newMovie.movie_genre_labels = res.rows.item(index).movie_genre_labels;
+                $scope.favouriteMovies.push(newMovie);
+              }
+              $scope.movies = $scope.favouriteMovies.slice();
+          } else {
+              // console.log("No results found");
+          }
+          $scope.hideSpinner();
+      }, function (err) {
+          // console.error(err);
+      });
+    };
+  };
+  var config = Configurations.getConfigurations();
+  $ionicLoading.show({
+        template: 'Loading...'
+      });
+  if(!config || isObjectEmpty(config)) {
+    Configurations.init($scope.fetchMovies());
+  } else {
+    $scope.fetchMovies()();
+  }
+  
+  $scope.searchMovies = function() {
+    // console.log('Typing.. ' + $scope.selected.movieName);
+    $scope.movies = $filter("filter")($scope.favouriteMovies, {title : $scope.selected.movieName});
+  }
+  $scope.hideSpinner = function() {
+    $ionicLoading.hide();
+  };
 });
