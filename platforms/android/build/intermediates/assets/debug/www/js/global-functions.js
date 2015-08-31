@@ -1,3 +1,8 @@
+FLAG_STRING_YES = 'Y';
+FLAG_STRING_NO = 'N';
+FLAG_STRING_IGNORE = 'I';
+FALL_BACK_IMAGE_PARH = 'http://www.classicposters.com/images/nopicture.gif';
+
 getDisplayDate = function(inlineDate){
 	var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 	if(inlineDate.length > 0) {

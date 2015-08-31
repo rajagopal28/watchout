@@ -90,7 +90,7 @@ return {
                 // console.log(relativeImageURL);
               }
           } else {
-            newTvShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+            newTvShow.poster_path = FALL_BACK_IMAGE_PARH;
           }
           // change the backdrop path
           relativeImageURL = newTvShow.backdrop_path;
@@ -104,7 +104,7 @@ return {
                 // console.log(relativeImageURL);
               }
           } else {
-            newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+            newTvShow.backdrop_path = FALL_BACK_IMAGE_PARH;
           }
           // add genre names
           var genres = newTvShow.genres;
@@ -119,7 +119,7 @@ return {
           newTvShow.show_genre_labels = tvShowGenreLabels;
           // set from metadata
           if(savedShowMetaData && !isObjectEmpty(savedShowMetaData)){
-            newTvShow.isFavourite = savedShowMetaData.is_favourite == 'Y';
+            newTvShow.isFavourite = savedShowMetaData.is_favourite == FLAG_STRING_YES;
           }
           // console.log(tvShowGenreLabels);
           newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
@@ -208,7 +208,7 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newTvShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newTvShow.poster_path = FALL_BACK_IMAGE_PARH;
             }
             // change the backdrop path
             relativeImageURL = newTvShow.backdrop_path;
@@ -222,8 +222,9 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newTvShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newTvShow.backdrop_path = FALL_BACK_IMAGE_PARH;
             }
+            newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
             // add genre names
             var tvShowGenreIds  = newTvShow.genre_ids;
             var tvShowGenreLabels = '';
@@ -341,6 +342,8 @@ return {
               tvShowSeasons.backdrop_path = config.images.base_url 
                                             + config.images.backdrop_sizes[0]
                                             + relativeImageURL;
+            } else {
+              newTvShow.backdrop_path = FALL_BACK_IMAGE_PARH;
             }
            //  // console.log(relativeImageURL);
             relativeImageURL = tvShowSeasons.poster_path;
@@ -348,6 +351,8 @@ return {
               tvShowSeasons.poster_path = config.images.base_url 
                                           + config.images.poster_sizes[0]
                                           + relativeImageURL;
+            } else {
+              newTvShow.poster_path = FALL_BACK_IMAGE_PARH;
             }
             // console.log(relativeImageURL);
         }
@@ -462,7 +467,7 @@ return {
                                           + relativeImageURL;
               tvShowEpisodes.poster_path = relativeImageURL;
             } else {
-              tvShowEpisodes.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+              tvShowEpisodes.poster_path = FALL_BACK_IMAGE_PARH;
             }
             // console.log(relativeImageURL);
         }
@@ -474,7 +479,7 @@ return {
             var episode = tvShowEpisodes.episodes[index];
             if(savedEpisodesMetaData && savedEpisodesMetaData[episode.episode_number]) {
               episode.air_date = new Date(episode.air_date).toDateString();
-              episode.isWatched = savedEpisodesMetaData[episode.episode_number].isWatched == 'Y';
+              episode.isWatched = savedEpisodesMetaData[episode.episode_number].isWatched == FLAG_STRING_YES;
             }
           }
         }
@@ -541,10 +546,10 @@ return {
             var relativeImageURL = tvShowEpisodeDetail.still_path;
             if(relativeImageURL) {
               tvShowEpisodeDetail.still_path = config.images.base_url 
-                                            + config.images.still_sizes[0]
+                                            + config.images.still_sizes[1]
                                             + relativeImageURL;
             } else {
-              tvShowEpisodeDetail.still_path = 'http://www.classicposters.com/images/nopicture.gif';
+              tvShowEpisodeDetail.still_path = FALL_BACK_IMAGE_PARH;
             }
            // console.log(relativeImageURL);
         }
@@ -556,10 +561,10 @@ return {
           // console.log(tvShowEpisodeDetail.isAired);
         }
         if(savedEpisodeMetaData.id) {
-          tvShowEpisodeDetail.alertEnabled = savedEpisodeMetaData.alertEnabled == 'Y';
-          tvShowEpisodeDetail.isFavourite = savedEpisodeMetaData.isFavourite == 'Y';
-          tvShowEpisodeDetail.isWatched = savedEpisodeMetaData.isWatched == 'Y';
-          tvShowEpisodeDetail.isAlerted = savedEpisodeMetaData.isAlerted == 'Y';
+          tvShowEpisodeDetail.alertEnabled = savedEpisodeMetaData.alertEnabled == FLAG_STRING_YES;
+          tvShowEpisodeDetail.isFavourite = savedEpisodeMetaData.isFavourite == FLAG_STRING_YES;
+          tvShowEpisodeDetail.isWatched = savedEpisodeMetaData.isWatched == FLAG_STRING_YES;
+          tvShowEpisodeDetail.isAlerted = savedEpisodeMetaData.isAlerted == FLAG_STRING_YES;
           tvShowEpisodeDetail.alertDate = savedEpisodeMetaData.alertDate;
         }
         if(scope) {  
@@ -661,7 +666,7 @@ return {
                     // console.log(relativeImageURL);
                   }
               } else {
-                newTVShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+                newTVShow.poster_path = FALL_BACK_IMAGE_PARH;
               }
               // change the backdrop path
               relativeImageURL = newTVShow.backdrop_path;
@@ -675,7 +680,7 @@ return {
                     // console.log(relativeImageURL);
                   }
               } else {
-                newTVShow.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+                newTVShow.backdrop_path = FALL_BACK_IMAGE_PARH;
               }
               
               // add genre names

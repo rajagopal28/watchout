@@ -27,6 +27,7 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
     }
     
     // SQLite Code
+    
     db = $cordovaSQLite.openDB("watchout.db");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritemoviegenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, "CREATE TABLE IF NOT EXISTS favouritetvgenres (id integer primary key, genreid text, genrename text, createdts long, lastmodifiedts long)");
@@ -38,7 +39,7 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
                               +" is_watched text, is_favourite text, is_alerted text, alert_enabled text,"
                               +" notificationid integer, alertondate long, createdts long, lastmodifiedts long)");
     $cordovaSQLite.execute(db, " CREATE UNIQUE INDEX IF NOT EXISTS watchedepisodesindex ON watchedepisodes(showid, seasonnumber, episodenumber)");
-    
+   
   });
 })
 

@@ -142,6 +142,7 @@ return {
             } else {
               newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
+            newMovie.release_date = new Date(newMovie.release_date).toDateString();
             // add genre names
             var genres = MovieGenres.all();
             var movieGenreIds  = newMovie.genre_ids;
@@ -279,6 +280,7 @@ return {
             } else {
               newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
             }
+            newMovie.release_date = new Date(newMovie.release_date).toDateString();
             // add genre names
             var genres = MovieGenres.all();
             var movieGenreIds  = newMovie.genre_ids;

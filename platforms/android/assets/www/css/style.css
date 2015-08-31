@@ -1,5 +1,22 @@
-.styled {
-	position : relative;
+.float_left {
+  float: left;
+}
+.float_right {
+  float: right;
+}
+.margin_auto {
+  margin: 0 auto;
+}
+.episode_detail {
+  width : 50%;
+  height : 40px;
+  display: inline-block;
+  text-align: center;
+}
+.nav_button {
+  width : 25%;
+  height : 40px;
+  display: inline-block;
 }
 .styled progress {
   /* Reset the default appearance */
@@ -7,7 +24,7 @@
   -moz-appearance: none;
   appearance: none;
 
-  width: 60%;
+  width: 70%;
   height: 10px;
 
   /* Firefox */
@@ -32,3 +49,4 @@
   background-color: #5CD65C;
   border-radius: 3px;
 }
+

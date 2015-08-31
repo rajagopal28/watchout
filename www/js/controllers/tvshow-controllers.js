@@ -12,6 +12,7 @@ angular.module('watchout.tvshow-controllers', [])
   }
   if(!$scope.tvShow || isObjectEmpty($scope.tvShow)) {
     TVShowDetail.init();
+    
     // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
     var query = "SELECT is_favourite FROM favouritetvshows WHERE showid = ?";
     $cordovaSQLite.execute(db, query, [$scope.selected.showId]).then(function(res) {
@@ -38,6 +39,7 @@ angular.module('watchout.tvshow-controllers', [])
     } else {
       poster_path = poster_path.substring(poster_path.lastIndexOf("/"));
     }
+  
     var query = "INSERT OR IGNORE INTO favouritetvshows (showid, showname, is_favourite,"
                 +" show_genre_labels,poster_path, first_air_date, lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?)";
     $cordovaSQLite.execute(db, query, [$scope.tvShow.id, $scope.tvShow.original_name, 'Y', 
@@ -47,12 +49,16 @@ angular.module('watchout.tvshow-controllers', [])
         // console.error(err);
         // console.log('ERROR:'+ err.message);
     });
+    
     $scope.updateFlag('is_favourite', 'Y');
+    $scope.tvShow.isFavourite = true;
   };
   $scope.removeFavourite = function() {
     $scope.updateFlag('is_favourite', 'N');
+    $scope.tvShow.isFavourite = false;
   };
   $scope.updateFlag = function(flagName, flagValueString) {
+    
     query = "UPDATE favouritetvshows SET "
                       + flagName + " = ? , lastmodifiedts = ?"
                       + " WHERE showid = ? ";
@@ -62,7 +68,7 @@ angular.module('watchout.tvshow-controllers', [])
         // console.error(err);
         // console.log('ERROR:'+ err.message);
     });
-    $scope.tvShow.isFavourite = flagValueString == 'Y';
+    
   };
   $scope.hideSpinner = function() {
     $ionicLoading.hide();
@@ -80,7 +86,7 @@ angular.module('watchout.tvshow-controllers', [])
   // console.log($stateParams.showId);
   $scope.selected = {};
   $scope.selected.showId = $stateParams.showId;
-
+  
   // Fetch the watched episodes count for this show ==> all seasons
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
   var query = "SELECT seasonnumber, count(episodenumber) as watchedcount FROM watchedepisodes WHERE showid = ? and is_watched in ('Y', 'I')  group by seasonnumber";
@@ -148,14 +154,17 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.closePopover();
   };
   $scope.setFlagValue = function(flagName, flagValueString) {
-    // console.log('updating flag =' + flagName + ' with ' + flagValueString);
+
+    console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    
     // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
                   + flagName
                   +",lastmodifiedts,createdts) VALUES (?,?,?,?,?,?)";
       var episodeNumberArray = [];
       var questionMarkString = "";
-      if($scope.tvShowSeasons && $scope.tvShowSeasons.seasons && $scope.tvShowSeasons.seasons[$scope.selected.selectedSeasonIndex]) {
+      if($scope.tvShowSeasons && $scope.tvShowSeasons.seasons 
+          && $scope.tvShowSeasons.seasons[$scope.selected.selectedSeasonIndex]) {
         var selectedSeason = $scope.tvShowSeasons.seasons[$scope.selected.selectedSeasonIndex];
         // console.log("in transaction episode_count-"+selectedSeason.episode_count);
          for(var episode_number = 1; 
@@ -193,7 +202,7 @@ angular.module('watchout.tvshow-controllers', [])
         } else {
           selectedSeason.watched_episodes_count = selectedSeason.episode_count;
         }
-      }      
+      }       
   };
   //Cleanup the popover when we're done with it!
   $scope.$on('$destroy', function() {
@@ -259,6 +268,7 @@ angular.module('watchout.tvshow-controllers', [])
   if($stateParams.episodeNumber) {
     $scope.goToEpisode($stateParams.episodeNumber);
   }
+  
   // Fetch the watched episodes status for this show and season
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
   var query = "SELECT episodenumber, is_watched,is_favourite,is_alerted,alert_enabled FROM watchedepisodes WHERE showid = ? and seasonnumber = ?";
@@ -289,7 +299,7 @@ angular.module('watchout.tvshow-controllers', [])
   }, function (err) {
       // console.error(err);
   });
-
+   
   $ionicPopover.fromTemplateUrl('templates/episode-options-menu.html', {
     scope: $scope,
   }).then(function(popover) {
@@ -323,9 +333,15 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.setFlagValue('is_watched', 'I', false);
     $scope.closePopover();
   };
-  $scope.changeWatchedStatus = function(showEpisodeNumber, episodeIndex) {
+  $scope.changeWatchedStatus = function(showEpisodeNumber, episodeIndex, currentStatusFlag, $event) {
     $scope.selected.episodeNumber = showEpisodeNumber;
     $scope.selected.selectedEpisodeIndex = episodeIndex;
+    var newStatusFlagString = currentStatusFlag ? 'N' : 'Y';
+    $scope.setFlagValue('is_watched', newStatusFlagString, true);
+    if ($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+    }
   };
   $scope.closePopover = function() {
     $scope.popup.hide();
@@ -349,7 +365,8 @@ angular.module('watchout.tvshow-controllers', [])
     $scope.closePopover();
   };
   $scope.setFlagValue = function(flagName, flagValueString, episodeSelected) {
-    // console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    console.log('updating flag =' + flagName + ' with ' + flagValueString);
+    
     // UPSERT into database
      var query = "INSERT OR IGNORE INTO watchedepisodes (showid, seasonnumber, episodenumber, "  
                   + flagName
@@ -402,7 +419,8 @@ angular.module('watchout.tvshow-controllers', [])
                       // console.error(err);
                       // console.log('ERROR:'+ err.message);
                   });
-      }      
+      }
+          
   };
   //Cleanup the popover when we're done with it!
   $scope.$on('$destroy', function() {
@@ -421,7 +439,7 @@ angular.module('watchout.tvshow-controllers', [])
   };
 })
 
-.controller('TVShowEpisodeDetailCtrl',  function($scope, $window,$stateParams,$cordovaSQLite,$ionicLoading, TVShowEpisodeDetail){
+.controller('TVShowEpisodeDetailCtrl',  function($scope, $window,$stateParams,$cordovaSQLite,$ionicPopup,$timeout,$ionicLoading, TVShowEpisodeDetail){
   $scope.tvShowEpisodeDetail = TVShowEpisodeDetail.get($stateParams.showId, $stateParams.seasonNumber, $stateParams.episodeNumber, $scope);
   // console.log($stateParams.showId + " season ="+$stateParams.seasonNumber + " epi =" + $stateParams.episodeNumber);
   $scope.selected = {};
@@ -429,7 +447,7 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.selected.seasonNumber = $stateParams.seasonNumber;
   $scope.selected.episodeNumber = $stateParams.episodeNumber;
   // console.log('Loading TVShowEpisodeDetailCtrl');
-
+  
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
   var query = "SELECT id, is_watched, is_favourite, is_alerted, alertondate FROM watchedepisodes WHERE showid = ? and seasonnumber = ? and episodenumber = ?";
   $cordovaSQLite.execute(db, query, [$scope.selected.showId, $scope.selected.seasonNumber, $scope.selected.episodeNumber]).then(function(res) {
@@ -471,8 +489,43 @@ angular.module('watchout.tvshow-controllers', [])
     // console.log($scope.selected);
     $scope.updateFlag('is_favourite', statusFlag);
   };
+  // Triggered on a button click, or some other target
+$scope.showPopup = function() {
+  $scope.data = {}
+
+  // An elaborate, custom popup
+  var myPopup = $ionicPopup.show({
+    templateUrl: 'templates/alert-schedule-popup.html',
+    title: 'When to Alert?',
+    subTitle: 'Please Choose one',
+    scope: $scope,
+    buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.selected.alertInterval) {
+            //don't allow the user to close unless he enters wifi password
+            e.preventDefault();
+          } else {
+            return $scope.selected.alertInterval;
+          }
+        }
+      }
+    ]
+  });
+  myPopup.then(function(res) {
+    console.log('Tapped!', res);
+    $scope.alertShow(true);
+  });
+  $timeout(function() {
+     myPopup.close(); //close the popup after 3 seconds for some reason
+  }, 3000);
+ };
   $scope.alertShow = function(statusFlag) {
     // console.log('alertShow statusFlag='+statusFlag);
+    var alertInterval = $scope.selected.alertInterval;
     $scope.tvShowEpisodeDetail.alertEnabled = statusFlag;
     // console.log($scope.selected);
     $scope.updateFlag('alert_enabled', statusFlag);
@@ -513,6 +566,7 @@ angular.module('watchout.tvshow-controllers', [])
               // console.error(err);
           });
     }
+    
   };
 
   $scope.addNotification = function(notificationId) {
@@ -525,6 +579,9 @@ angular.module('watchout.tvshow-controllers', [])
                               + "* is about to be aired today";
     var title = "Watchout a new episode";
     var notificationData = {};
+    if(alertInterval) {
+      alertTime -= alertInterval;
+    }
     notificationData['alertondate'] = alertTime;
     notificationData['id'] = notificationId;
     notificationData['title'] = title;
@@ -560,6 +617,7 @@ angular.module('watchout.tvshow-controllers', [])
   $scope.updateFlag = function(flagName, flagValue) {
     var flagValueString = flagValue ? 'Y' : 'N';
     // console.log(JSON.stringify($scope.selected));
+    
     $scope.selected.episodeNumber = $scope.tvShowEpisodeDetail.episode_number;
     // console.log('updating flag =' + flagName + ' with ' + flagValueString);
     // UPSERT into database
@@ -585,5 +643,6 @@ angular.module('watchout.tvshow-controllers', [])
       }, function (err) {
           // console.error(err);
       });
+    
   };
 });

@@ -9,7 +9,7 @@
         <p>Networks:{{tvShowSeasons.networks_label}}        </p>
       </div>
       <div class="item item-body">
-        <img class="item item-image" src="{{tvShowSeasons.backdrop_path}}">
+        <img class="item item-image full-image" src="{{tvShowSeasons.backdrop_path}}">
         <p>
           {{tvShowSeasons.overview}}
         </p>
@@ -27,15 +27,14 @@
       <div class="item card">
         <ion-list>
           <ion-item ng-repeat="tvShowSeason in tvShowSeasons.seasons" type="item-text-wrap" href="#/app/tvshows_episodes/{{tvShowSeasons.id}}/{{tvShowSeason.season_number}}">
-          Season {{tvShowSeason.season_number}}
-          <br/>
-          <div class="styled">
+          <h3>Season {{tvShowSeason.season_number}}</h3>
+          <div class="item item-button-right styled">
             <progress max="{{tvShowSeason.episode_count}}" value="{{tvShowSeason.watched_episodes_count}}"> </progress>
-            <button class="button button-icon icon ion-android-more-vertical" ng-click="showMenu($event,'{{tvShowSeason.season_number}}',$index)"> 
-          </button>
+            <button class="button button-icon" ng-click="showMenu($event,'{{tvShowSeason.season_number}}',$index)"> 
+               <i class="icon ion-android-more-vertical"></i>
+            </button>
           </div>
-          <br/>
-          Last Aired : {{tvShowSeason.air_date}}
+          <p>Last Aired : {{tvShowSeason.air_date}}</p>
           </ion-item>
         </ion-list>
       </div>      

@@ -13,6 +13,7 @@ angular.module('watchout.tvshow-list-controllers', [])
   };
   var genres = TVGenres.getFavouriteGenres();
   if(!genres || genres.length==0) {
+    
     var query = "select genreid from favouritetvgenres";
     $cordovaSQLite.execute(db,query,[]).then(function(results){
       var selectedGenres = [];
@@ -31,6 +32,7 @@ angular.module('watchout.tvshow-list-controllers', [])
       }
       $scope.setGenres();
     });
+    
   } else {
     $scope.setGenres();
   } 
@@ -43,6 +45,7 @@ angular.module('watchout.tvshow-list-controllers', [])
    $scope.saveFavoriteGenre = function() {
     // console.log('Saving favourite genre');
     var selectedGenres = $filter("filter")($scope.tvGenres, {checked: true});
+    
     var query = "delete from favouritetvgenres";
     $cordovaSQLite.execute(db, query);
     // save genres
@@ -58,7 +61,8 @@ angular.module('watchout.tvshow-list-controllers', [])
           // console.log('ERROR:'+ err.message);
       });
     }// end for
-    // console.log(JSON.stringify(selectedGenres));
+    
+    console.log(JSON.stringify(selectedGenres));
  };
 })
 .controller('TVShowCtrl',  function($scope,$filter,$stateParams,$cordovaSQLite,$ionicLoading,$state,$ionicHistory, TVShows, TVGenres){
@@ -78,6 +82,7 @@ angular.module('watchout.tvshow-list-controllers', [])
   $scope.fetchMoreTvShows = function() {
     var genres = TVGenres.getFavouriteGenres();
     if(!genres || genres.length==0) {
+     
        var query = "select genreid from favouritetvgenres";
         $cordovaSQLite.execute(db,query,[]).then(function(results){
           var selectedGenres = [];

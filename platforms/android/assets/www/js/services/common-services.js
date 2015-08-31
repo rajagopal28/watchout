@@ -28,7 +28,7 @@ angular.module('watchout.common-services', [])
       function(data){
         isLoading=false;
         console.log("in ErrorCB");
-        console.log(arguments);
+        console.log(JSON.stringify(data));
       });
     }
   },

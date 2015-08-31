@@ -7,7 +7,7 @@
       <p>{{tvShowEpisodeDetail.air_date}}</p>
     </div>
     <div class="item item-body">
-      <img class="item item-image" src="{{tvShowEpisodeDetail.still_path}}">
+      <img class="item item-image full-image" src="{{tvShowEpisodeDetail.still_path}}">
       <p>
         {{tvShowEpisodeDetail.overview}}
       </p>
@@ -25,7 +25,7 @@
       <i class="icon ion-android-favorite-outline"></i>
       Add Favorite
     </a>
-    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isAired && !tvShowEpisodeDetail.alertEnabled" href="#" ng-click="alertShow(true)">
+    <a class="tab-item" ng-if="!tvShowEpisodeDetail.isAired && !tvShowEpisodeDetail.alertEnabled" href="#" ng-click="showPopup()">
       <i class="icon ion-android-stopwatch"></i>
       Alert when aired
     </a>

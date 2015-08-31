@@ -1,11 +1,10 @@
 <ion-view>
  <ion-content scroll="false">
-
- 	<div class="styled">
- 		<a ng-click="previous()" class="button icon-left ion-chevron-left button-clear button-dark">Previous</a>
- 		<span class="padding_margin_20 float_right" ng-if="totalResults != 0">Episode {{currentIndex*1+1}} of {{totalResults}}</span>
- 		<a ng-click="next()" class="button icon-right float-right ion-chevron-right button-clear button-dark">Next</a>
- 	</div>
+ 	<div>
+		<a ng-click="previous()" class="float_left nav_button button icon-left ion-chevron-left button-clear button-dark">Previous</a>
+ 		<div class="margin_auto episode_detail button-clear button button-dark" ng-if="totalResults != 0">Episode {{currentIndex*1+1}} of {{totalResults}}</div>
+ 		<a ng-click="next()" class="float_right nav_button button icon-right ion-chevron-right button-clear button-dark">Next</a>
+	</div>
     <ion-nav-view name="tab-tvshow-episode-detail"></ion-nav-view>
  </ion-content>
 </ion-view>
