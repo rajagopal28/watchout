@@ -1,11 +1,11 @@
 <ion-side-menus>
     <ion-pane ion-side-menu-content>
         <ion-nav-bar class="bar-balanced nav-title-slide-ios7">
+        <ion-nav-back-button>
+        </ion-nav-back-button>
          <ion-nav-buttons side="left">
            <button class="button button-icon button-clear ion-navicon" ng-click="openMenu()"></button>
          </ion-nav-buttons> 
-         <ion-nav-back-button ng-click="goBack()" class="button-icon icon ion-ios7-arrow-back">
-        </ion-nav-back-button>
         </ion-nav-bar>
        
         <ion-nav-view name="mainContent" cache-view="false"> </ion-nav-view>
