@@ -519,9 +519,6 @@ $scope.showPopup = function() {
     console.log('Tapped!', res);
     $scope.alertShow(true);
   });
-  $timeout(function() {
-     myPopup.close(); //close the popup after 3 seconds for some reason
-  }, 3000);
  };
   $scope.alertShow = function(statusFlag) {
     // console.log('alertShow statusFlag='+statusFlag);
