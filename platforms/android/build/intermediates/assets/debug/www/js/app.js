@@ -81,6 +81,26 @@ angular.module('watchout', ['ionic', 'ngCordova','watchout.common-services','wat
         }
       }      
     })
+    .state('app.settings', {
+      url: '/settings',
+      cache:false,
+      views : {
+        'mainContent' : {
+          controller: 'HomeCtrl',
+          templateUrl: 'templates/settings.html'
+        }
+      }      
+    })
+    .state('app.about', {
+      url: '/about',
+      cache:false,
+      views : {
+        'mainContent' : {
+          controller: 'HomeCtrl',
+          templateUrl: 'templates/home.html'
+        }
+      }      
+    })
     .state('app.movies.genre', {
       url: '/genre',
       views : {
