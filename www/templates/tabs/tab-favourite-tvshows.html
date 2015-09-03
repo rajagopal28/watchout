@@ -4,7 +4,7 @@
       <i class="icon ion-search placeholder-icon"></i>
       <input type="search" placeholder="Search" ng-model="selected.tvShowName" ng-change="searchShows()">
      </label>
-    <ion-list>
+    <ion-list ng-if="tvShows.length > 0">
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="tvShow in tvShows" type="item-text-wrap" ui-sref="app.tvshow-selected({'showId' : '{{tvShow.id}}'})">
         <img ng-src="{{tvShow.poster_path}}">
         <h2>{{tvShow.original_name}}</h2>
@@ -13,5 +13,10 @@
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
+    <div class="card" ng-if="tvShows.length==0">
+      <div class="item item-text-wrap">
+        You have not Favourited any Show.
+      </div>
+    </div>
   </ion-content>
 </ion-view>

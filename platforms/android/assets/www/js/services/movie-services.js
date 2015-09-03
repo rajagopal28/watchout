@@ -126,7 +126,7 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newMovie.poster_path = FALL_BACK_IMAGE_PARH;
             }
             // change the backdrop path
             relativeImageURL = newMovie.backdrop_path;
@@ -140,7 +140,7 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newMovie.backdrop_path = FALL_BACK_IMAGE_PARH;
             }
             newMovie.release_date = new Date(newMovie.release_date).toDateString();
             // add genre names
@@ -264,7 +264,7 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newMovie.poster_path = FALL_BACK_IMAGE_PARH;
             }
             // change the backdrop path
             relativeImageURL = newMovie.backdrop_path;
@@ -278,7 +278,7 @@ return {
                   // console.log(relativeImageURL);
                 }
             } else {
-              newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+              newMovie.backdrop_path = FALL_BACK_IMAGE_PARH;
             }
             newMovie.release_date = new Date(newMovie.release_date).toDateString();
             // add genre names
@@ -380,6 +380,12 @@ return {
     },
     setMetaData : function(metaData) {
       savedMovieMetaData = metaData;
+      if(movieDetail && savedMovieMetaData && !isObjectEmpty(savedMovieMetaData)){
+            movieDetail.isFavourite = savedMovieMetaData.isFavourite == FLAG_STRING_YES;
+            movieDetail.isAlerted = savedMovieMetaData.isAlerted == FLAG_STRING_YES;
+            movieDetail.alertEnabled = savedMovieMetaData.alertEnabled == FLAG_STRING_YES;
+            movieDetail.alertDate = savedMovieMetaData.alertDate;
+      }
     },
     loadMovieDetailCallBack : function(scope, movieId) {
       return function() {
@@ -403,7 +409,7 @@ return {
                 // console.log(relativeImageURL);
               }
           } else {
-            newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+            newMovie.poster_path = FALL_BACK_IMAGE_PARH;
           }
           // change the backdrop path
           relativeImageURL = newMovie.backdrop_path;
@@ -417,12 +423,13 @@ return {
                 // console.log(relativeImageURL);
               }
           } else {
-            newMovie.backdrop_path = 'http://www.classicposters.com/images/nopicture.gif';
+            newMovie.backdrop_path = FALL_BACK_IMAGE_PARH;
           }
+          movieDetail = newMovie;
           if(savedMovieMetaData && !isObjectEmpty(savedMovieMetaData)){
-            newMovie.isFavourite = savedMovieMetaData.isFavourite == 'Y';
-            newMovie.isAlerted = savedMovieMetaData.isAlerted == 'Y';
-            newMovie.alertEnabled = savedMovieMetaData.alertEnabled == 'Y';
+            newMovie.isFavourite = savedMovieMetaData.isFavourite == FLAG_STRING_YES;
+            newMovie.isAlerted = savedMovieMetaData.isAlerted == FLAG_STRING_YES;
+            newMovie.alertEnabled = savedMovieMetaData.alertEnabled == FLAG_STRING_YES;
             newMovie.alertDate = savedMovieMetaData.alertDate;
           }
           // add genre names

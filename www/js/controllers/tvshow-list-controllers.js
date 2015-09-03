@@ -131,11 +131,13 @@ angular.module('watchout.tvshow-list-controllers', [])
   };
   $scope.searchShows = function() {
     // console.log('Typing.. ' + $scope.selected.showName);
-    $ionicLoading.show({
-      template: 'Loading...'
-    });
-    // console.log('Fetching More TV Shows...');
-    TVShowSearch.loadMore($scope, $scope.selected.showName);
+    if($scope.selected.showName && $scope.selected.showName != '') {
+      $ionicLoading.show({
+        template: 'Loading...'
+      });
+      // console.log('Fetching More TV Shows...');
+      TVShowSearch.loadMore($scope, $scope.selected.showName);
+    }
   }
   $scope.fetchMoreTvShows = function() {
     // $scope.apply();
@@ -162,7 +164,7 @@ angular.module('watchout.tvshow-list-controllers', [])
   $scope.tvShows = [];
   $scope.favouriteTVShows = [];
   TVGenres.init();
-
+  
   $scope.selected = {
     tvShowName : ''
   };
@@ -172,6 +174,7 @@ angular.module('watchout.tvshow-list-controllers', [])
      var query = "SELECT showid, showname, first_air_date,show_genre_labels, poster_path FROM favouritetvshows where is_favourite = 'Y'";
       $cordovaSQLite.execute(db, query, []).then(function(res) {
           if(res.rows.length > 0) { 
+              var config = Configurations.getConfigurations();
               $scope.favouriteTVShows = [];
               $scope.tvShows=[];               
               for(var index=0; index < res.rows.length; index++ ) {
@@ -190,7 +193,7 @@ angular.module('watchout.tvshow-list-controllers', [])
                     console.log(poster_path);
                   }
                 } else {
-                    newTVShow.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+                    newTVShow.poster_path = FALL_BACK_IMAGE_PARH;
                 }
                 newTVShow.show_genre_labels = res.rows.item(index).show_genre_labels;
                 $scope.favouriteTVShows.push(newTVShow);
@@ -205,10 +208,10 @@ angular.module('watchout.tvshow-list-controllers', [])
       });
     };
   };
-  var config = Configurations.getConfigurations();
   $ionicLoading.show({
-        template: 'Loading...'
-      });
+    template: 'Loading...'
+  });
+  var config = Configurations.getConfigurations();
   if(!config || isObjectEmpty(config)) {
     Configurations.init($scope.fetchTVShows());
   } else {

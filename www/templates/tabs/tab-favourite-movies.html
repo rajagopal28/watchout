@@ -4,7 +4,7 @@
     <i class="icon ion-search placeholder-icon"></i>
     <input type="search" placeholder="Search" ng-model="selected.movieName" ng-change="searchMovies()">
    </label>
-    <ion-list>
+    <ion-list  ng-if="movies.length > 0">
       <ion-item class="item-remove-animate item-avatar item-icon-right" ng-repeat="movie in movies" type="item-text-wrap" href="#/app/movies/{{movie.id}}">
         <img ng-src="{{movie.poster_path}}">
         <h2>{{movie.title}}</h2>
@@ -13,5 +13,10 @@
         <i class="icon ion-chevron-right icon-accessory"></i>
       </ion-item>
     </ion-list>
+    <div class="card" ng-if="movies.length==0">
+      <div class="item item-text-wrap">
+        You have not Favourited any Movie.
+      </div>
+    </div>
   </ion-content>
 </ion-view>

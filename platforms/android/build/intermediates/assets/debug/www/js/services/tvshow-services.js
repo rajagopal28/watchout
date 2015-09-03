@@ -14,7 +14,7 @@ angular.module('watchout.tvshow-services', [])
           scope.tvGenres = all();
           scope.hideSpinner();
         }
-      }, 
+      },  
       function(error){
         // console.log('Error CB');
         // console.log(error);
@@ -67,6 +67,10 @@ return {
     },
     setMetaData : function(metaData) {
       savedShowMetaData = metaData;
+      // set from metadata
+      if(tvShowDetail && savedShowMetaData && !isObjectEmpty(savedShowMetaData)){
+        newTvShow.isFavourite = savedShowMetaData.is_favourite == FLAG_STRING_YES;
+      }
     },
     loadTvShowDetailCallBack : function(scope, tvShowId) {
       return function() {
@@ -124,7 +128,9 @@ return {
           // console.log(tvShowGenreLabels);
           newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
           newTvShow.last_air_date = new Date(newTvShow.last_air_date).toDateString();
+
           scope.tvShow = newTvShow;
+          
           scope.hideSpinner();
           isLoading = false;
         },
@@ -225,6 +231,7 @@ return {
               newTvShow.backdrop_path = FALL_BACK_IMAGE_PARH;
             }
             newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
+            
             // add genre names
             var tvShowGenreIds  = newTvShow.genre_ids;
             var tvShowGenreLabels = '';
@@ -325,6 +332,19 @@ return {
   },
   setMetaData : function(metaData) {
     savedSeasonMetaData = metaData;
+    if(tvShowSeasons.seasons) {
+      for(var index in tvShowSeasons.seasons) {
+        var tvShowSeason = tvShowSeasons.seasons[index];
+        if(tvShowSeason.air_date) {
+          tvShowSeason.air_date = new Date(tvShowSeason.air_date).toDateString();
+        } 
+        // get watched episodes count
+        tvShowSeason.watched_episodes_count = 0;
+        if(savedSeasonMetaData && savedSeasonMetaData[tvShowSeason.season_number]) {
+          tvShowSeason.watched_episodes_count = savedSeasonMetaData[tvShowSeason.season_number].watchedcount;
+        }            
+      }
+    }
   },
   loadTVShowSeasonsCallBack : function(showId,scope) {
     return function() {
@@ -696,6 +716,7 @@ return {
               }
               // set it to list item 
               newTVShow.show_genre_labels = tvShowGenreLabels;
+              newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
               // console.log(tvShowGenreLabels);
             }
             tvShows = tvShows.concat(newShowsPage);
