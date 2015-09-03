@@ -135,17 +135,9 @@ angular.module('watchout.tvshow-list-controllers', [])
       $ionicLoading.show({
         template: 'Loading...'
       });
-      // console.log('Fetching More TV Shows...');
+      console.log('Fetching More TV Shows...1');
       TVShowSearch.loadMore($scope, $scope.selected.showName);
     }
-  }
-  $scope.fetchMoreTvShows = function() {
-    // $scope.apply();
-    $ionicLoading.show({
-      template: 'Loading...'
-    });
-    // console.log('Fetching More TV Shows...');
-    TVShowSearch.loadMore($scope, $scope.selected.showName);
   }
   $scope.moreDataCanBeLoaded = function() {
     if($scope.selected.showName.trim() == '') {
@@ -155,7 +147,7 @@ angular.module('watchout.tvshow-list-controllers', [])
   }
   $scope.$on('$stateChangeSuccess', function() {
     if( $scope.selected.showName != '' && !$scope.tvShows || $scope.tvShows.length == 0) {
-      $scope.fetchMoreTvShows();
+      $scope.searchShows();
     }
   });
 })

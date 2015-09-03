@@ -716,7 +716,7 @@ return {
               }
               // set it to list item 
               newTVShow.show_genre_labels = tvShowGenreLabels;
-              newTvShow.first_air_date = new Date(newTvShow.first_air_date).toDateString();
+              newTVShow.first_air_date = new Date(newTVShow.first_air_date).toDateString();
               // console.log(tvShowGenreLabels);
             }
             tvShows = tvShows.concat(newShowsPage);
