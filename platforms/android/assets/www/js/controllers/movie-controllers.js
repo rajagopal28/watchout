@@ -287,10 +287,12 @@ $scope.showPopup = function() {
     notificationData['message'] = notificationMessage;
     addNotification(notificationData, window);
       // UPSERT into database
-     var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename,"
-                  + "alert_enabled, alertondate, is_alerted, notificationid"
-                  +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?)";
+      var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename"
+                  + ",movie_genre_labels,release_date, poster_path"
+                  + ",alert_enabled, alertondate, is_alerted, notificationid"
+                  +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?,?,?,?)";
       $cordovaSQLite.execute(db, query, [$scope.movie.id,$scope.movie.original_title,
+                                            $scope.movie.movie_genre_labels,$scope.movie.release_date,poster_path ,
                                            'Y',alertTime,'N', notificationId, (new Date()).getTime(), (new Date()).getTime()]).then(function(res) {
          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
