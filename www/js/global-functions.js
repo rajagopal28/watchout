@@ -21,7 +21,7 @@ addNotification = function(notificationData, windowObj){
 	      id: notificationData.id,
 	      title:   notificationData.title,
 	      message: notificationData.message,
-	      at : notificationData.alertOnDate,
+	      at : notificationData.alertondate,
 	      icon:      'ic_notification',
 	      smallIcon: 'ic_notification_small',
 		});

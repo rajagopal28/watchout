@@ -527,7 +527,6 @@ $scope.showPopup = function() {
  };
   $scope.alertShow = function(statusFlag) {
     // console.log('alertShow statusFlag='+statusFlag);
-    var alertInterval = $scope.selected.alertInterval;
     $scope.tvShowEpisodeDetail.alertEnabled = statusFlag;
     // console.log($scope.selected);
     $scope.updateFlag('alert_enabled', statusFlag);
@@ -581,6 +580,7 @@ $scope.showPopup = function() {
                               + "* is about to be aired today";
     var title = "Watchout a new episode";
     var notificationData = {};
+    var alertInterval = $scope.selected.alertInterval;
     if(alertInterval) {
       alertTime -= alertInterval;
     }

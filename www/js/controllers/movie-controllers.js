@@ -127,10 +127,10 @@ angular.module('watchout.movie-controllers', [])
     }
   });
 })
-.controller('MovieDetailCtrl',  function($scope,$stateParams,$cordovaSQLite, $ionicLoading, Movies,MovieSearch, MovieDetail){
+.controller('MovieDetailCtrl',  function($scope,$stateParams,$cordovaSQLite,$ionicPopup, $ionicLoading, Movies,MovieSearch, MovieDetail){
   
   // Database code to fetch the isWatched, isFavourite and isAlertEnabled flags
-  var query = "SELECT id,is_favourite, is_alerted, alertondate FROM favouritemovies WHERE movieid = ? ";
+  var query = "SELECT id,is_favourite, is_alerted, alert_enabled, alertondate FROM favouritemovies WHERE movieid = ? ";
   $cordovaSQLite.execute(db, query, [$stateParams.movieId]).then(function(res) {
       var selectedRecord = {};
       if(res.rows.length > 0) {
@@ -140,7 +140,7 @@ angular.module('watchout.movie-controllers', [])
           selectedRecord.alertEnabled = res.rows.item(0).alert_enabled;
           selectedRecord.alertDate = new Date(res.rows.item(0).alertondate).toDateString();
           selectedRecord.id = res.rows.item(0).id;
-          // console.log("selectedRecord=" + JSON.stringify(selectedRecord));
+          console.log("selectedRecord=" + JSON.stringify(selectedRecord));
           MovieDetail.setMetaData(selectedRecord);
           
       } else {
@@ -158,15 +158,15 @@ angular.module('watchout.movie-controllers', [])
         MovieDetail.loadMovieDetail($scope, $stateParams.movieId);
       } else {
         $scope.movie.isReleased = new Date($scope.movie.release_date).getTime() - new Date().getTime() < 0;
-        $scope.movie.isFavourite = selectedRecord.isFavourite == 'Y';
-        $scope.movie.isAlerted = selectedRecord.isAlerted == 'Y';
-        $scope.movie.alertEnabled = selectedRecord.alertEnabled == 'Y';
+        $scope.movie.isFavourite = selectedRecord.isFavourite == FLAG_STRING_YES;
+        $scope.movie.isAlerted = selectedRecord.isAlerted == FLAG_STRING_YES;
+        $scope.movie.alertEnabled = selectedRecord.alertEnabled == FLAG_STRING_YES;
         $scope.movie.alertDate = selectedRecord.alertDate;
       }
   }, function (err) {
       // console.error(err);
   });
- 
+  $scope.selected = {};
   $scope.setFavourite = function() {
    
     var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename, is_favourite,"
@@ -239,7 +239,36 @@ angular.module('watchout.movie-controllers', [])
     }
     
   };
+$scope.showPopup = function() {
+  $scope.data = {}
 
+  // An elaborate, custom popup
+  var myPopup = $ionicPopup.show({
+    templateUrl: 'templates/alert-schedule-popup.html',
+    title: 'When to Alert?',
+    subTitle: 'Please Choose one',
+    scope: $scope,
+    buttons: [
+      { text: 'Cancel' },
+      {
+        text: '<b>Ok</b>',
+        type: 'button-positive',
+        onTap: function(e) {
+          if (!$scope.selected.alertInterval) {
+            //don't allow the user to close unless he enters wifi password
+            e.preventDefault();
+          } else {
+            return $scope.selected.alertInterval;
+          }
+        }
+      }
+    ]
+  });
+  myPopup.then(function(res) {
+    console.log('Tapped!', res);
+    $scope.alertMovie(true);
+  });
+ };
   $scope.addNotification = function(notificationId) {
     var alertTime = new Date($scope.movie.release_date).getTime();
     var notificationMessage = "The movie *"
@@ -247,17 +276,21 @@ angular.module('watchout.movie-controllers', [])
                               + "* is about to be aired "
                               + $scope.movie.release_date;
     var title = "Watchout a new movie";
+    var alertInterval = $scope.selected.alertInterval;
+    if(alertInterval) {
+      alertTime -= alertInterval;
+    }
     var notificationData = {};
-    notificationData['alertondate'] = alertTime;
+    notificationData['alertondate'] = alertTime; 
     notificationData['id'] = notificationId;
     notificationData['title'] = title;
     notificationData['message'] = notificationMessage;
     addNotification(notificationData, window);
       // UPSERT into database
-     var query = "INSERT OR IGNORE INTO favouritemovies (movieid, "
+     var query = "INSERT OR IGNORE INTO favouritemovies (movieid, moviename,"
                   + "alert_enabled, alertondate, is_alerted, notificationid"
-                  +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?)";
-      $cordovaSQLite.execute(db, query, [$scope.movie.id,
+                  +",lastmodifiedts, createdts) VALUES (?,?,?,?,?,?,?,?)";
+      $cordovaSQLite.execute(db, query, [$scope.movie.id,$scope.movie.original_title,
                                            'Y',alertTime,'N', notificationId, (new Date()).getTime(), (new Date()).getTime()]).then(function(res) {
          // console.log("INSERT ID -> " + res.insertId);
       }, function (err) {
@@ -372,7 +405,7 @@ angular.module('watchout.movie-controllers', [])
                     console.log(poster_path);
                   }
                 } else {
-                    newMovie.poster_path = 'http://www.classicposters.com/images/nopicture.gif';
+                    newMovie.poster_path = FALL_BACK_IMAGE_PARH;
                 }
                 
                 newMovie.movie_genre_labels = res.rows.item(index).movie_genre_labels;
